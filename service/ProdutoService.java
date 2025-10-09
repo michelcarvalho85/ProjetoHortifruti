@@ -1,25 +1,38 @@
 package service;
 
-import model.Produto;
-import repository.ProdutoRepository;
 import java.util.List;
+import model.Produto;
+import repository.ProdutoFileRepository;
+import repository.ProdutoRepository;
 
 public class ProdutoService {
-    private ProdutoRepository repository = new ProdutoRepository();
+    private ProdutoRepository memoria = new ProdutoRepository();
+    private ProdutoFileRepository arquivo = new ProdutoFileRepository();
+
+    public ProdutoService() {
+        // Carrega produtos do arquivo ao iniciar
+        List<Produto> salvos = arquivo.carregar();
+        salvos.forEach(memoria::salvar);
+    }
 
     public void adicionarProduto(Produto produto) {
-        repository.salvar(produto);
+        memoria.salvar(produto);
+        arquivo.salvarTudo(memoria.listar());
     }
 
     public List<Produto> listarProdutos() {
-        return repository.listar();
+        return memoria.listar();
     }
 
     public boolean atualizarProduto(int id, Produto novoProduto) {
-        return repository.atualizar(id, novoProduto);
+        boolean ok = memoria.atualizar(id, novoProduto);
+        if (ok) arquivo.salvarTudo(memoria.listar());
+        return ok;
     }
 
     public boolean removerProduto(int id) {
-        return repository.deletar(id);
+        boolean ok = memoria.deletar(id);
+        if (ok) arquivo.salvarTudo(memoria.listar());
+        return ok;
     }
 }
