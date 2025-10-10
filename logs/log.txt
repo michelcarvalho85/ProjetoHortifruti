@@ -1,0 +1,2 @@
+2025-10-10T18:22:18.082838500 | Administrador | Adicionou produto: BANANA
+2025-10-10T18:30:50.286713100 | Administrador | Adicionou produto: UVA

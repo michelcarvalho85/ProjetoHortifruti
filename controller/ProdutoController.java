@@ -1,15 +1,23 @@
 package controller;
 
-import model.Categoria;
-import model.Produto;
-import service.ProdutoService;
-
 import java.util.List;
 import java.util.Scanner;
 
+import model.Categoria;
+import model.Produto;
+import service.LogService;
+import service.ProdutoService;
+
 public class ProdutoController {
-    private ProdutoService service = new ProdutoService();
-    private Scanner scanner = new Scanner(System.in);
+    private final ProdutoService service = new ProdutoService();
+    private final LogService log = new LogService();
+    private final String usuarioAtivo;
+    private final Scanner scanner = new Scanner(System.in);
+
+    // Construtor que recebe o usuário ativo
+    public ProdutoController(String usuarioAtivo) {
+        this.usuarioAtivo = usuarioAtivo;
+    }
 
     public void menu() {
         int opcao;
@@ -51,6 +59,7 @@ public class ProdutoController {
 
         Produto p = new Produto(id, nome, preco, qtd, Categoria.valueOf(cat));
         service.adicionarProduto(p);
+        log.registrar(usuarioAtivo, "Adicionou produto: " + nome);
         System.out.println("✅ Produto adicionado com sucesso!");
     }
 
@@ -79,6 +88,7 @@ public class ProdutoController {
 
         Produto novo = new Produto(id, nome, preco, qtd, Categoria.valueOf(cat));
         if (service.atualizarProduto(id, novo)) {
+            log.registrar(usuarioAtivo, "Atualizou produto ID " + id);
             System.out.println("✅ Produto atualizado!");
         } else {
             System.out.println("❌ Produto não encontrado.");
@@ -88,7 +98,9 @@ public class ProdutoController {
     private void remover() {
         System.out.print("ID do produto a remover: ");
         int id = scanner.nextInt();
+
         if (service.removerProduto(id)) {
+            log.registrar(usuarioAtivo, "Removeu produto ID " + id);
             System.out.println("✅ Produto removido!");
         } else {
             System.out.println("❌ Produto não encontrado.");

@@ -1,38 +1,30 @@
 package service;
 
 import java.util.List;
+
 import model.Produto;
-import repository.ProdutoFileRepository;
-import repository.ProdutoRepository;
+import repository.ProdutoDBRepository;
 
 public class ProdutoService {
-    private ProdutoRepository memoria = new ProdutoRepository();
-    private ProdutoFileRepository arquivo = new ProdutoFileRepository();
+    private final ProdutoDBRepository db = new ProdutoDBRepository();
 
-    public ProdutoService() {
-        // Carrega produtos do arquivo ao iniciar
-        List<Produto> salvos = arquivo.carregar();
-        salvos.forEach(memoria::salvar);
-    }
-
+    // CREATE
     public void adicionarProduto(Produto produto) {
-        memoria.salvar(produto);
-        arquivo.salvarTudo(memoria.listar());
+        db.salvar(produto);
     }
 
+    // READ
     public List<Produto> listarProdutos() {
-        return memoria.listar();
+        return db.listar();
     }
 
+    // UPDATE
     public boolean atualizarProduto(int id, Produto novoProduto) {
-        boolean ok = memoria.atualizar(id, novoProduto);
-        if (ok) arquivo.salvarTudo(memoria.listar());
-        return ok;
+        return db.atualizar(id, novoProduto);
     }
 
+    // DELETE
     public boolean removerProduto(int id) {
-        boolean ok = memoria.deletar(id);
-        if (ok) arquivo.salvarTudo(memoria.listar());
-        return ok;
+        return db.remover(id); // ✅ método correto agora
     }
 }
