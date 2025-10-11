@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HortiSystem 🌿</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1>HortiSystem</h1>
+        <h2>Gerenciamento de Produtos e Usuários</h2>
+    </header>
+
+    <main id="app">
+        <!-- Login -->
+        <section id="login-section">
+            <h3>Login de Usuário</h3>
+            <input type="text" id="login-nome" placeholder="Nome de usuário">
+            <input type="password" id="login-senha" placeholder="Senha">
+            <button id="login-btn">Entrar</button>
+            <p id="login-msg"></p>
+        </section>
+
+        <!-- CRUD de Produto -->
+        <section id="produto-section" style="display: none;">
+            <h3>Cadastro de Produtos</h3>
+
+            <div class="form-container">
+                <input type="text" id="nome" placeholder="Nome do produto">
+                <input type="number" id="preco" placeholder="Preço">
+                <input type="number" id="quantidade" placeholder="Quantidade">
+                <select id="categoria">
+                    <option value="FRUTA">Fruta</option>
+                    <option value="VERDURA">Verdura</option>
+                    <option value="LEGUME">Legume</option>
+                </select>
+                <button id="adicionar-btn">Adicionar</button>
+            </div>
+
+            <table id="tabela-produtos">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Preço</th>
+                        <th>Quantidade</th>
+                        <th>Categoria</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 HortiSystem - Todos os direitos reservados</p>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/produto.js"></script>
+</body>
+</html>

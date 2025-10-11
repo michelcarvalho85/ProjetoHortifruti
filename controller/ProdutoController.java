@@ -27,6 +27,8 @@ public class ProdutoController {
             System.out.println("2 - Listar Produtos");
             System.out.println("3 - Atualizar Produto");
             System.out.println("4 - Remover Produto");
+            System.out.println("5 - Exportar produtos para JSON");
+            System.out.println("6 - Importar produtos de JSON");
             System.out.println("0 - Sair");
             System.out.print("Escolha: ");
             opcao = scanner.nextInt();
@@ -37,6 +39,8 @@ public class ProdutoController {
                 case 2 -> listar();
                 case 3 -> atualizar();
                 case 4 -> remover();
+                case 5 -> exportarJSON();
+                case 6 -> importarJSON();
                 case 0 -> System.out.println("Saindo...");
                 default -> System.out.println("Opção inválida!");
             }
@@ -105,5 +109,19 @@ public class ProdutoController {
         } else {
             System.out.println("❌ Produto não encontrado.");
         }
+    }
+
+    // ============================================================
+    // 🧩 FUNÇÕES JSON — Exportar e Importar
+    // ============================================================
+
+    private void exportarJSON() {
+        service.exportarParaJSON("produtos.json");
+        log.registrar(usuarioAtivo, "Exportou produtos para JSON");
+    }
+
+    private void importarJSON() {
+        service.importarDeJSON("produtos.json");
+        log.registrar(usuarioAtivo, "Importou produtos de JSON");
     }
 }
