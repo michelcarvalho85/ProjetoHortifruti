@@ -1,51 +1,60 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const loginBtn = document.getElementById("login-btn");
-  const loginMsg = document.getElementById("login-msg");
+// main.js — login + alternar seções + carregar lista de produtos
 
-  if (loginBtn) {
-    loginBtn.addEventListener("click", async (event) => {
-      event.preventDefault();
+(function () {
+  const API = "http://localhost:8080";
 
-      // Pega os valores digitados nos campos
-      const login = document.getElementById("login-nome").value.trim();
-      const senha = document.getElementById("login-senha").value.trim();
+  const inputLogin = document.getElementById("login-nome");
+  const inputSenha = document.getElementById("login-senha");
+  const btnLogin   = document.getElementById("login-btn");
+  const msgLogin   = document.getElementById("login-msg");
 
-      if (!login || !senha) {
-        loginMsg.textContent = "⚠️ Preencha usuário e senha.";
-        loginMsg.style.color = "orange";
-        return;
+  const secLogin   = document.getElementById("login-section");
+  const secProduto = document.getElementById("produto-section");
+
+  async function fazerLogin() {
+    const login = (inputLogin.value || "").trim();
+    const senha = (inputSenha.value || "").trim();
+
+    if (!login || !senha) {
+      msgLogin.textContent = "⚠️ Preencha usuário e senha.";
+      msgLogin.style.color = "orange";
+      return;
+    }
+
+    try {
+      const resp = await fetch(`${API}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ login, senha })
+      });
+
+      if (resp.ok) {
+        const usuario = await resp.json();
+        msgLogin.textContent = "✅ Bem-vindo, " + (usuario.nome || login) + "!";
+        msgLogin.style.color = "green";
+
+        // mostra produtos e esconde login
+        secLogin.style.display = "none";
+        secProduto.style.display = "block";
+
+        // carrega a tabela ao entrar
+        if (window.HS_loadProdutos) window.HS_loadProdutos();
+      } else {
+        const msg = await resp.json().catch(() => "Usuário ou senha incorretos!");
+        msgLogin.textContent = "❌ " + msg;
+        msgLogin.style.color = "red";
       }
+    } catch (e) {
+      console.error(e);
+      msgLogin.textContent = "❌ Erro de comunicação com o servidor.";
+      msgLogin.style.color = "red";
+    }
+  }
 
-      // Monta o JSON que o backend espera
-      const dados = { login, senha };
-
-      try {
-        const resposta = await fetch("http://localhost:8080/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(dados)
-        });
-
-        if (resposta.ok) {
-          const usuario = await resposta.json();
-
-          loginMsg.textContent = "✅ Bem-vindo, " + usuario.nome + "!";
-          loginMsg.style.color = "green";
-
-          // Exibe a área de produtos e esconde o login
-          document.getElementById("login-section").style.display = "none";
-          document.getElementById("produto-section").style.display = "block";
-
-        } else {
-          const msg = await resposta.json();
-          loginMsg.textContent = "❌ " + msg;
-          loginMsg.style.color = "red";
-        }
-      } catch (erro) {
-        console.error("Erro:", erro);
-        loginMsg.textContent = "❌ Erro de conexão com o servidor.";
-        loginMsg.style.color = "red";
-      }
+  if (btnLogin) {
+    btnLogin.addEventListener("click", (ev) => {
+      ev.preventDefault();
+      fazerLogin();
     });
   }
-});
+})();

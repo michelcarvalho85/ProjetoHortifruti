@@ -7,6 +7,9 @@ public class Produto {
     private int quantidade;
     private Categoria categoria;
 
+    // Construtor vazio (útil para Gson / frameworks)
+    public Produto() { }
+
     public Produto(int id, String nome, double preco, int quantidade, Categoria categoria) {
         this.id = id;
         this.nome = nome;
@@ -21,6 +24,8 @@ public class Produto {
     public int getQuantidade() { return quantidade; }
     public Categoria getCategoria() { return categoria; }
 
+    // Setters
+    public void setId(int id) { this.id = id; }
     public void setNome(String nome) { this.nome = nome; }
     public void setPreco(double preco) { this.preco = preco; }
     public void setQuantidade(int quantidade) { this.quantidade = quantidade; }

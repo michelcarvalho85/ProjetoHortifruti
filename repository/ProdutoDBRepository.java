@@ -22,6 +22,44 @@ public class ProdutoDBRepository {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
+    // >>> NOVO: Próximo ID (MAX(id)+1)
+    public int proximoId() {
+        String sql = "SELECT COALESCE(MAX(id), 0) + 1 AS prox FROM produto";
+        try (Connection conn = conectar();
+             Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            if (rs.next()) return rs.getInt("prox");
+        } catch (SQLException e) {
+            System.out.println("❌ Erro ao obter próximo ID: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return 1; // fallback
+    }
+
+    // (Opcional) Buscar por ID
+    public Produto buscarPorId(int id) {
+        String sql = "SELECT id, nome, preco, quantidade, categoria FROM produto WHERE id = ?";
+        try (Connection conn = conectar();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Produto(
+                            rs.getInt("id"),
+                            rs.getString("nome"),
+                            rs.getDouble("preco"),
+                            rs.getInt("quantidade"),
+                            Categoria.valueOf(rs.getString("categoria"))
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Erro ao buscar produto por ID: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     // ✅ CREATE
     public void salvar(Produto produto) {
         String sql = "INSERT INTO produto (id, nome, preco, quantidade, categoria) VALUES (?, ?, ?, ?, ?)";
@@ -32,7 +70,7 @@ public class ProdutoDBRepository {
             stmt.setString(2, produto.getNome());
             stmt.setDouble(3, produto.getPreco());
             stmt.setInt(4, produto.getQuantidade());
-            stmt.setString(5, produto.getCategoria().name());
+            stmt.setString(5, produto.getCategoria().name()); // grava o nome exato do enum
             stmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -44,7 +82,7 @@ public class ProdutoDBRepository {
     // ✅ READ
     public List<Produto> listar() {
         List<Produto> produtos = new ArrayList<>();
-        String sql = "SELECT * FROM produto ORDER BY id";
+        String sql = "SELECT id, nome, preco, quantidade, categoria FROM produto ORDER BY id";
         try (Connection conn = conectar();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -85,7 +123,7 @@ public class ProdutoDBRepository {
         }
     }
 
-    // ✅ DELETE (renomeado de deletar → remover)
+    // ✅ DELETE
     public boolean remover(int id) {
         String sql = "DELETE FROM produto WHERE id=?";
         try (Connection conn = conectar();
