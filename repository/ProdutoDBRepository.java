@@ -41,7 +41,8 @@ public class ProdutoDBRepository {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("❌ Erro ao buscar produto por ID: " + e.getMessage());
+            System.err.println("❌ Erro ao buscar produto por ID: " + e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
@@ -66,12 +67,12 @@ public class ProdutoDBRepository {
             }
 
         } catch (SQLException e) {
-            System.out.println("❌ Erro ao salvar produto: " + e.getMessage());
+            System.err.println("❌ Erro ao salvar produto: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // ✅ READ
+    // ✅ READ (corrigido com log detalhado)
     public List<Produto> listar() {
         List<Produto> produtos = new ArrayList<>();
         String sql = "SELECT id, nome, preco, quantidade, categoria FROM produto ORDER BY id";
@@ -79,17 +80,23 @@ public class ProdutoDBRepository {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
+            System.out.println("📦 Executando SELECT * FROM produto ...");
+
             while (rs.next()) {
-                produtos.add(new Produto(
+                Produto p = new Produto(
                     rs.getInt("id"),
                     rs.getString("nome"),
                     rs.getDouble("preco"),
                     rs.getInt("quantidade"),
                     Categoria.valueOf(rs.getString("categoria"))
-                ));
+                );
+                produtos.add(p);
             }
+
+            System.out.println("✅ Produtos retornados: " + produtos.size());
         } catch (SQLException e) {
-            System.out.println("❌ Erro ao listar produtos: " + e.getMessage());
+            System.err.println("❌ Erro ao listar produtos: " + e.getMessage());
+            e.printStackTrace();
         }
         return produtos;
     }
@@ -108,7 +115,8 @@ public class ProdutoDBRepository {
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.out.println("❌ Erro ao atualizar produto: " + e.getMessage());
+            System.err.println("❌ Erro ao atualizar produto: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -123,7 +131,8 @@ public class ProdutoDBRepository {
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.out.println("❌ Erro ao remover produto: " + e.getMessage());
+            System.err.println("❌ Erro ao remover produto: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }

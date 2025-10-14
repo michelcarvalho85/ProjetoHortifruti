@@ -12,13 +12,19 @@
     <h2>Gerenciamento de Produtos e Usuários</h2>
   </header>
 
+  <!-- 🔹 Barra do usuário (mostrada após login) -->
+  <div id="userbar" style="display:none" class="userbar">
+    <span id="hello-user">Olá, <b id="hello-name"></b> 👋</span>
+    <button id="logout-btn" type="button" class="btn btn-outline">Sair</button>
+  </div>
+
   <main id="app">
     <!-- Login -->
     <section id="login-section">
       <h3>Login de Usuário</h3>
       <input type="text" id="login-nome" placeholder="Nome de usuário"/>
       <input type="password" id="login-senha" placeholder="Senha"/>
-      <button id="login-btn">Entrar</button>
+      <button id="login-btn" type="button">Entrar</button>
       <p id="login-msg"></p>
     </section>
 
@@ -30,13 +36,13 @@
         <input type="text" id="nome" placeholder="Nome do produto"/>
         <input type="number" id="preco" placeholder="Preço" step="0.01"/>
         <input type="number" id="quantidade" placeholder="Quantidade" step="1"/>
-        <select id="categoria">
+        <select id="categoria" title="Escolha a categoria do produto">
           <option value="FRUTA">Fruta</option>
           <option value="VERDURA">Verdura</option>
           <option value="LEGUME">Legume</option>
-          <!-- pode manter só essas; o JS converte para FRUTAS/VERDURAS/LEGUMES -->
+          <!-- JS converte para FRUTAS/VERDURAS/LEGUMES -->
         </select>
-        <button id="adicionar-btn">Adicionar</button>
+        <button id="adicionar-btn" type="button">Adicionar</button>
       </div>
 
       <table id="tabela-produtos">

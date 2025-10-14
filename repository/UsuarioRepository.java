@@ -5,13 +5,17 @@ import java.util.List;
 
 import model.Usuario;
 
+/**
+ * Repositório simples de usuários em memória
+ * (para teste do login web)
+ */
 public class UsuarioRepository {
     private List<Usuario> usuarios = new ArrayList<>();
 
     public UsuarioRepository() {
         // Usuários pré-cadastrados
-        usuarios.add(new Usuario("Administrador", "admin", "1234", Usuario.Role.ADMIN));
-        usuarios.add(new Usuario("Funcionário", "func", "1234", Usuario.Role.FUNCIONARIO));
+        usuarios.add(new Usuario("Administrador", "admin", "123", Usuario.Role.ADMIN));
+        usuarios.add(new Usuario("Funcionário", "func", "123", Usuario.Role.FUNCIONARIO));
     }
 
     public Usuario autenticar(String login, String senha) {
