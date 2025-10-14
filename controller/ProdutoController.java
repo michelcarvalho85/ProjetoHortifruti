@@ -42,36 +42,40 @@ public class ProdutoController {
                 case 5 -> exportarJSON();
                 case 6 -> importarJSON();
                 case 0 -> System.out.println("Saindo...");
-                default -> System.out.println("Opção inválida!");
+                default -> System.out.println("❌ Opção inválida!");
             }
         } while (opcao != 0);
     }
 
     private void adicionar() {
-        System.out.print("ID: ");
-        int id = scanner.nextInt();
-        scanner.nextLine();
         System.out.print("Nome: ");
         String nome = scanner.nextLine();
+
         System.out.print("Preço: ");
         double preco = scanner.nextDouble();
+
         System.out.print("Quantidade: ");
         int qtd = scanner.nextInt();
 
         System.out.println("Categoria (FRUTAS, VERDURAS, LEGUMES, BEBIDAS, OUTROS): ");
         String cat = scanner.next().toUpperCase();
 
-        Produto p = new Produto(id, nome, preco, qtd, Categoria.valueOf(cat));
-        service.adicionarProduto(p);
-        log.registrar(usuarioAtivo, "Adicionou produto: " + nome);
-        System.out.println("✅ Produto adicionado com sucesso!");
+        try {
+            Produto p = new Produto(0, nome, preco, qtd, Categoria.valueOf(cat));
+            service.adicionarProduto(p);
+            log.registrar(usuarioAtivo, "Adicionou produto: " + nome + " (ID gerado automaticamente)");
+            System.out.println("✅ Produto adicionado com sucesso!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("❌ Categoria inválida! Operação cancelada.");
+        }
     }
 
     private void listar() {
         List<Produto> lista = service.listarProdutos();
         if (lista.isEmpty()) {
-            System.out.println("Nenhum produto cadastrado.");
+            System.out.println("⚠️ Nenhum produto cadastrado.");
         } else {
+            System.out.println("\n=== LISTA DE PRODUTOS ===");
             lista.forEach(System.out::println);
         }
     }
@@ -83,19 +87,26 @@ public class ProdutoController {
 
         System.out.print("Novo nome: ");
         String nome = scanner.nextLine();
+
         System.out.print("Novo preço: ");
         double preco = scanner.nextDouble();
+
         System.out.print("Nova quantidade: ");
         int qtd = scanner.nextInt();
-        System.out.println("Nova categoria: ");
+
+        System.out.println("Nova categoria (FRUTAS, VERDURAS, LEGUMES, BEBIDAS, OUTROS): ");
         String cat = scanner.next().toUpperCase();
 
-        Produto novo = new Produto(id, nome, preco, qtd, Categoria.valueOf(cat));
-        if (service.atualizarProduto(id, novo)) {
-            log.registrar(usuarioAtivo, "Atualizou produto ID " + id);
-            System.out.println("✅ Produto atualizado!");
-        } else {
-            System.out.println("❌ Produto não encontrado.");
+        try {
+            Produto novo = new Produto(id, nome, preco, qtd, Categoria.valueOf(cat));
+            if (service.atualizarProduto(id, novo)) {
+                log.registrar(usuarioAtivo, "Atualizou produto ID " + id);
+                System.out.println("✅ Produto atualizado!");
+            } else {
+                System.out.println("❌ Produto não encontrado.");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("❌ Categoria inválida! Operação cancelada.");
         }
     }
 
@@ -118,10 +129,12 @@ public class ProdutoController {
     private void exportarJSON() {
         service.exportarParaJSON("produtos.json");
         log.registrar(usuarioAtivo, "Exportou produtos para JSON");
+        System.out.println("✅ Produtos exportados para 'produtos.json'.");
     }
 
     private void importarJSON() {
         service.importarDeJSON("produtos.json");
         log.registrar(usuarioAtivo, "Importou produtos de JSON");
+        System.out.println("✅ Produtos importados de 'produtos.json'.");
     }
 }

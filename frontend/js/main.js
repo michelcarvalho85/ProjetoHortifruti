@@ -1,4 +1,4 @@
-// main.js — login + alternar seções + carregar lista de produtos
+// main.js — login + alternar seções + manter sessão ativa
 
 (function () {
   const API = "http://localhost:8080";
@@ -10,6 +10,24 @@
 
   const secLogin   = document.getElementById("login-section");
   const secProduto = document.getElementById("produto-section");
+
+  // Função para salvar usuário logado
+  function salvarSessao(usuario) {
+    sessionStorage.setItem("usuarioLogado", JSON.stringify(usuario));
+  }
+
+  // Função para recuperar usuário logado
+  function obterSessao() {
+    const u = sessionStorage.getItem("usuarioLogado");
+    return u ? JSON.parse(u) : null;
+  }
+
+  // Função para sair (logout)
+  function sair() {
+    sessionStorage.removeItem("usuarioLogado");
+    secProduto.style.display = "none";
+    secLogin.style.display = "block";
+  }
 
   async function fazerLogin() {
     const login = (inputLogin.value || "").trim();
@@ -30,17 +48,17 @@
 
       if (resp.ok) {
         const usuario = await resp.json();
+        salvarSessao(usuario); // mantém logado
         msgLogin.textContent = "✅ Bem-vindo, " + (usuario.nome || login) + "!";
         msgLogin.style.color = "green";
 
-        // mostra produtos e esconde login
+        // Mostra produtos e esconde login
         secLogin.style.display = "none";
         secProduto.style.display = "block";
 
-        // carrega a tabela ao entrar
         if (window.HS_loadProdutos) window.HS_loadProdutos();
       } else {
-        const msg = await resp.json().catch(() => "Usuário ou senha incorretos!");
+        const msg = await resp.text();
         msgLogin.textContent = "❌ " + msg;
         msgLogin.style.color = "red";
       }
@@ -51,10 +69,28 @@
     }
   }
 
+  // Ligar evento do botão de login
   if (btnLogin) {
     btnLogin.addEventListener("click", (ev) => {
-      ev.preventDefault();
+      ev.preventDefault(); // impede o recarregamento da página
       fazerLogin();
     });
+  }
+
+  // Verifica se já tem sessão salva
+  const usuario = obterSessao();
+  if (usuario) {
+    secLogin.style.display = "none";
+    secProduto.style.display = "block";
+    if (window.HS_loadProdutos) window.HS_loadProdutos();
+  } else {
+    secLogin.style.display = "block";
+    secProduto.style.display = "none";
+  }
+
+  // Opcional: botão de sair (se tiver no HTML)
+  const btnLogout = document.getElementById("logout-btn");
+  if (btnLogout) {
+    btnLogout.addEventListener("click", sair);
   }
 })();
