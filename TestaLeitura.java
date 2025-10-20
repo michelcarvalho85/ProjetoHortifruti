@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 public class TestaLeitura {
     public static void main(String[] args) {
-        String url = "jdbc:mysql://localhost:3306/hortisystem?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+        String url = "jdbc:postgresql://localhost:5432/hortisystem";
         String user = "root";
         String password = "root"; // altere se necessário
 

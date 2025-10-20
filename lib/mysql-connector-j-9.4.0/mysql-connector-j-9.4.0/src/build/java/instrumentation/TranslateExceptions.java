@@ -252,7 +252,7 @@ public class TranslateExceptions {
         /*
          * java.sql.Driver
          */
-        // com.mysql.cj.jdbc.Driver extends NonRegisteringDriver implements java.sql.Driver
+        // org.postgresql.Driver extends NonRegisteringDriver implements java.sql.Driver
         clazz = pool.get(NonRegisteringDriver.class.getName());
         instrumentJdbcMethods(clazz, java.sql.Driver.class);
         clazz.writeFile(args[0]);

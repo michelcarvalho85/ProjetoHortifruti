@@ -26,7 +26,7 @@ import java.util.Properties;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.mysql.cj.jdbc.Driver;
+import org.postgresql.Driver;
 
 /**
  * Base class to help file bug reports for Connector/J.
@@ -50,10 +50,10 @@ import com.mysql.cj.jdbc.Driver;
  *
  * <p>
  * In any of the above three methods, you should use one of the variants of the 'getConnection' method to create a JDBC connection to MySQL, which will use the
- * default JDBC URL of 'jdbc:mysql:///test'.
+ * default JDBC URL of 'jdbc:postgresql:///test'.
  *
  * <p>
- * If you need to use a JDBC URL that is different than 'jdbc:mysql:///test', then override the method 'getUrl' as well.
+ * If you need to use a JDBC URL that is different than 'jdbc:postgresql:///test', then override the method 'getUrl' as well.
  *
  * <p>
  * Use the 'assertTrue' methods to create conditions that must be met in your testcase demonstrating the behavior you are expecting (vs. the behavior you are
@@ -171,12 +171,12 @@ public abstract class BaseBugReport {
      * java.sql.Connection that you use to demonstrate this bug will be provided
      * by the getConnection() method using this URL.
      *
-     * The default value is 'jdbc:mysql:///test'
+     * The default value is 'jdbc:postgresql:///test'
      *
      * @return URL
      */
     public String getUrl() {
-        return "jdbc:mysql:///test";
+        return "jdbc:postgresql:///test";
     }
 
     /**

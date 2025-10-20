@@ -246,7 +246,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
     @Test
     public void testBug3554() throws Exception {
         try {
-            new NonRegisteringDriver().connect("jdbc:mysql://localhost:3306/?user=root&password=root", new Properties());
+            new NonRegisteringDriver().connect("jdbc:postgresql://localhost:5432/?user=root&password=root", new Properties());
         } catch (SQLException sqlEx) {
             assertTrue(sqlEx.getMessage().indexOf("Malformed") == -1);
         }
@@ -405,7 +405,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
             String user = defaultHost.getUser();
             String password = defaultHost.getPassword();
 
-            StringBuilder newUrlToTestPortNum = new StringBuilder("jdbc:mysql://");
+            StringBuilder newUrlToTestPortNum = new StringBuilder("jdbc:postgresql://");
 
             if (host != null) {
                 newUrlToTestPortNum.append(host);
@@ -475,7 +475,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
             //
             // Now make sure failover works
             //
-            StringBuilder newUrlToTestFailover = new StringBuilder("jdbc:mysql://");
+            StringBuilder newUrlToTestFailover = new StringBuilder("jdbc:postgresql://");
 
             if (host != null) {
                 newUrlToTestFailover.append(host);
@@ -565,7 +565,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
         Connection failoverConnection = null;
 
         try {
-            failoverConnection = getConnectionWithProps("jdbc:mysql://source:" + port + ",replica:" + port + "/", props);
+            failoverConnection = getConnectionWithProps("jdbc:postgresql://source:" + port + ",replica:" + port + "/", props);
             failoverConnection.setAutoCommit(false);
 
             String originalConnectionId = getSingleIndexedValueWithQuery(failoverConnection, 1, "SELECT CONNECTION_ID()").toString();
@@ -614,7 +614,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
         Connection failoverConnection = null;
 
         try {
-            failoverConnection = getConnectionWithProps("jdbc:mysql://" + host + "/", props);
+            failoverConnection = getConnectionWithProps("jdbc:postgresql://" + host + "/", props);
             failoverConnection.setAutoCommit(false);
 
             String failoverConnectionId = getSingleIndexedValueWithQuery(failoverConnection, 1, "SELECT CONNECTION_ID()").toString();
@@ -1150,13 +1150,13 @@ public class ConnectionRegressionTest extends BaseTestCase {
         Connection failoverConnection = null;
 
         try {
-            failoverConnection = getConnectionWithProps("jdbc:mysql://" + newHostBuf.toString() + "/", props);
+            failoverConnection = getConnectionWithProps("jdbc:postgresql://" + newHostBuf.toString() + "/", props);
 
             String originalConnectionId = getSingleIndexedValueWithQuery(failoverConnection, 1, "SELECT CONNECTION_ID()").toString();
 
             System.out.println(originalConnectionId);
 
-            Connection nextConnection = getConnectionWithProps("jdbc:mysql://" + newHostBuf.toString() + "/", props);
+            Connection nextConnection = getConnectionWithProps("jdbc:postgresql://" + newHostBuf.toString() + "/", props);
 
             String nextId = getSingleIndexedValueWithQuery(nextConnection, 1, "SELECT CONNECTION_ID()").toString();
 
@@ -1443,7 +1443,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
             props.remove(PropertyKey.trustCertificateKeyStoreType.getKeyName());
             props.remove(PropertyKey.trustCertificateKeyStorePassword.getKeyName());
 
-            final String url = "jdbc:mysql://" + hostSpec + "/" + db + "?sslMode=REQUIRED&verifyServerCertificate=true"
+            final String url = "jdbc:postgresql://" + hostSpec + "/" + db + "?sslMode=REQUIRED&verifyServerCertificate=true"
                     + "&trustCertificateKeyStoreUrl=file:src/test/config/ssl-test-certs/ca-truststore&trustCertificateKeyStoreType=JKS"
                     + "&trustCertificateKeyStorePassword=password";
 
@@ -2367,7 +2367,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
     }
 
     private void checkBug32216(String host, String port, String dbname) throws SQLException {
-        StringBuilder url = new StringBuilder("jdbc:mysql://");
+        StringBuilder url = new StringBuilder("jdbc:postgresql://");
         url.append(host);
 
         if (port != null) {
@@ -2435,28 +2435,28 @@ public class ConnectionRegressionTest extends BaseTestCase {
     public void testBug47494() throws Exception {
         try {
             getConnectionWithProps(
-                    "jdbc:mysql://localhost:9999/test?socketFactory=testsuite.regression.ConnectionRegressionTest$PortNumberSocketFactory,sslMode=DISABLED,allowPublicKeyRetrieval=true");
+                    "jdbc:postgresql://localhost:9999/test?socketFactory=testsuite.regression.ConnectionRegressionTest$PortNumberSocketFactory,sslMode=DISABLED,allowPublicKeyRetrieval=true");
         } catch (SQLException sqlEx) {
             assertTrue(sqlEx.getCause() instanceof IOException);
         }
 
         try {
             getConnectionWithProps(
-                    "jdbc:mysql://:9999/test?socketFactory=testsuite.regression.ConnectionRegressionTest$PortNumberSocketFactory,sslMode=DISABLED,allowPublicKeyRetrieval=true");
+                    "jdbc:postgresql://:9999/test?socketFactory=testsuite.regression.ConnectionRegressionTest$PortNumberSocketFactory,sslMode=DISABLED,allowPublicKeyRetrieval=true");
         } catch (SQLException sqlEx) {
             assertTrue(sqlEx.getCause() instanceof IOException);
         }
 
         try {
             getConnectionWithProps(
-                    "jdbc:mysql://:9999,:9999/test?socketFactory=testsuite.regression.ConnectionRegressionTest$PortNumberSocketFactory,sslMode=DISABLED,allowPublicKeyRetrieval=true");
+                    "jdbc:postgresql://:9999,:9999/test?socketFactory=testsuite.regression.ConnectionRegressionTest$PortNumberSocketFactory,sslMode=DISABLED,allowPublicKeyRetrieval=true");
         } catch (SQLException sqlEx) {
             assertTrue(sqlEx.getCause() instanceof IOException);
         }
 
         try {
             getConnectionWithProps(
-                    "jdbc:mysql://localhost:9999,localhost:9999/test?socketFactory=testsuite.regression.ConnectionRegressionTest$PortNumberSocketFactory,sslMode=DISABLED,allowPublicKeyRetrieval=true");
+                    "jdbc:postgresql://localhost:9999,localhost:9999/test?socketFactory=testsuite.regression.ConnectionRegressionTest$PortNumberSocketFactory,sslMode=DISABLED,allowPublicKeyRetrieval=true");
         } catch (SQLException sqlEx) {
             assertTrue(sqlEx.getCause() instanceof IOException);
         }
@@ -2799,7 +2799,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
         Connection failoverConnection = null;
 
         try {
-            failoverConnection = getConnectionWithProps("jdbc:mysql://source:" + port + ",replica:" + port + "/", props);
+            failoverConnection = getConnectionWithProps("jdbc:postgresql://source:" + port + ",replica:" + port + "/", props);
 
             String userHost = getSingleIndexedValueWithQuery(1, "SELECT USER()").toString();
             String[] userParts = userHost.split("@");
@@ -2873,7 +2873,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
         Connection failoverConnection = null;
 
         try {
-            failoverConnection = getConnectionWithProps("jdbc:mysql://source:" + port + ",replica:" + port + "/", props);
+            failoverConnection = getConnectionWithProps("jdbc:postgresql://source:" + port + ",replica:" + port + "/", props);
             failoverConnection.setAutoCommit(false);
 
             assertEquals("/source", UnreliableSocketFactory.getHostFromLastConnection());
@@ -3095,9 +3095,9 @@ public class ConnectionRegressionTest extends BaseTestCase {
         Connection failoverConnection2 = null;
 
         try {
-            failoverConnection1 = getConnectionWithProps("jdbc:mysql://source:" + port + ",replica:" + port + "/", props);
+            failoverConnection1 = getConnectionWithProps("jdbc:postgresql://source:" + port + ",replica:" + port + "/", props);
 
-            failoverConnection2 = getConnectionWithProps("jdbc:mysql://source:" + port + ",replica:" + port + "/", props);
+            failoverConnection2 = getConnectionWithProps("jdbc:postgresql://source:" + port + ",replica:" + port + "/", props);
 
             assertTrue(((com.mysql.cj.jdbc.JdbcConnection) failoverConnection1).isSourceConnection());
 
@@ -4444,7 +4444,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
         }
 
         String loadbalanceUrl = String.format("jdbc:mysql:loadbalance://%s,%s/%s?%s", hostSpec, hostSpec, database, configs.toString());
-        String failoverUrl = String.format("jdbc:mysql://%s,%s/%s?%s", hostSpec, "127.0.0.1:" + port, database, configs.toString());
+        String failoverUrl = String.format("jdbc:postgresql://%s,%s/%s?%s", hostSpec, "127.0.0.1:" + port, database, configs.toString());
         Properties props2 = new Properties();
         props2.setProperty(PropertyKey.sslMode.getKeyName(), SslMode.DISABLED.name());
         props2.setProperty(PropertyKey.allowPublicKeyRetrieval.getKeyName(), "true");
@@ -4879,7 +4879,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
 
                     baseprops.putAll(props);
 
-                    connection = getConnectionWithProps("jdbc:mysql://source:" + port + ",replica:" + port + "/", baseprops);
+                    connection = getConnectionWithProps("jdbc:postgresql://source:" + port + ",replica:" + port + "/", baseprops);
                     break;
                 case 3:
                     //ReplicationConnection;
@@ -4970,7 +4970,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
         Statement st1 = null;
         Connection c2 = null;
         Properties props = new Properties();
-        String url = "jdbc:mysql://" + getEncodedHostPortPairFromTestsuiteUrl();
+        String url = "jdbc:postgresql://" + getEncodedHostPortPairFromTestsuiteUrl();
 
         try {
             props.setProperty(PropertyKey.sslMode.getKeyName(), SslMode.DISABLED.name());
@@ -5407,7 +5407,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
         } catch (IOException e1) {
             fail("Failed to initialize a mock server.");
         }
-        final String testURL = "jdbc:mysql://localhost:" + serverPort;
+        final String testURL = "jdbc:postgresql://localhost:" + serverPort;
         Connection testConn = null;
         final int oldLoginTimeout = DriverManager.getLoginTimeout();
         final int loginTimeout = 3;
@@ -5714,8 +5714,8 @@ public class ConnectionRegressionTest extends BaseTestCase {
         testBug62577TestUrl(String.format("jdbc:mysql:loadbalance://%s,%s/%s?%s", hostSpec, hostSpec, database, cfg1));
         testBug62577TestUrl(String.format("jdbc:mysql:loadbalance://%s,%s/%s?%s", hostSpec, hostSpec, database, cfg2));
         // failover
-        testBug62577TestUrl(String.format("jdbc:mysql://%s,%s/%s?%s", hostSpec, hostSpec, database, cfg1));
-        testBug62577TestUrl(String.format("jdbc:mysql://%s,%s/%s?%s", hostSpec, hostSpec, database, cfg2));
+        testBug62577TestUrl(String.format("jdbc:postgresql://%s,%s/%s?%s", hostSpec, hostSpec, database, cfg1));
+        testBug62577TestUrl(String.format("jdbc:postgresql://%s,%s/%s?%s", hostSpec, hostSpec, database, cfg2));
     }
 
     @Test
@@ -8849,7 +8849,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
         final String port = connProps.getProperty(PropertyKey.PORT.getKeyName(), "3306");
         final String hostPortPair = host + ":" + port;
         final String database = connProps.getProperty(PropertyKey.DBNAME.getKeyName());
-        final String username = connProps.getProperty(PropertyKey.USER.getKeyName());
+        final String username = postgres
         final String password = connProps.getProperty(PropertyKey.PASSWORD.getKeyName(), "");
         final String connectionTimeZone = connProps.getProperty(PropertyKey.connectionTimeZone.getKeyName());
 
@@ -9177,8 +9177,8 @@ public class ConnectionRegressionTest extends BaseTestCase {
         props.setProperty(PropertyKey.allowPublicKeyRetrieval.getKeyName(), "true");
         props.setProperty(PropertyKey.socketFactory.getKeyName(), UnreliableSocketFactory.class.getName());
         for (String h : hosts) {
-            getConnectionWithProps(String.format("jdbc:mysql://%s:%s", h, port), props).close();
-            getConnectionWithProps(String.format("jdbc:mysql://address=(protocol=tcp)(host=%s)(port=%s)", h, port), props).close();
+            getConnectionWithProps(String.format("jdbc:postgresql://%s:%s", h, port), props).close();
+            getConnectionWithProps(String.format("jdbc:postgresql://address=(protocol=tcp)(host=%s)(port=%s)", h, port), props).close();
         }
     }
 
@@ -10159,7 +10159,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
         props.clear();
         props.setProperty(PropertyKey.sslMode.getKeyName(), SslMode.DISABLED.name());
         props.setProperty(PropertyKey.allowPublicKeyRetrieval.getKeyName(), "true");
-        con = (JdbcConnection) getConnectionWithProps("jdbc:mysql://(host=" + getHostFromTestsuiteUrl() + ",port=" + getPortFromTestsuiteUrl() + ",user=" + user
+        con = (JdbcConnection) getConnectionWithProps("jdbc:postgresql://(host=" + getHostFromTestsuiteUrl() + ",port=" + getPortFromTestsuiteUrl() + ",user=" + user
                 + ",password=" + password + ",zeroDateTimeBehavior=convertToNull)/" + this.dbName, appendRequiredProperties(props));
         assertEquals(ZeroDatetimeBehavior.CONVERT_TO_NULL,
                 con.getPropertySet().<ZeroDatetimeBehavior>getEnumProperty(PropertyKey.zeroDateTimeBehavior).getValue());
@@ -10182,10 +10182,10 @@ public class ConnectionRegressionTest extends BaseTestCase {
         connStr.add(dbUrl
                 + "&connectionCollation=utf8mb4_unicode_ci&sslMode=DISABLED&allowPublicKeyRetrieval=true&sessionVariables=sql_mode='IGNORE_SPACE,ANSI',FOREIGN_KEY_CHECKS=0");
         connStr.add(String.format(
-                "jdbc:mysql://address=(host=%1$s)(port=%2$d)(sslMode=DISABLED)(allowPublicKeyRetrieval=true)(connectionCollation=utf8mb4_unicode_ci)(sessionVariables=sql_mode='IGNORE_SPACE,ANSI',FOREIGN_KEY_CHECKS=0)(user=%3$s)(password=%4$s)/%5$s",
+                "jdbc:postgresql://address=(host=%1$s)(port=%2$d)(sslMode=DISABLED)(allowPublicKeyRetrieval=true)(connectionCollation=utf8mb4_unicode_ci)(sessionVariables=sql_mode='IGNORE_SPACE,ANSI',FOREIGN_KEY_CHECKS=0)(user=%3$s)(password=%4$s)/%5$s",
                 getEncodedHostFromTestsuiteUrl(), getPortFromTestsuiteUrl(), user, password, hostInfo.getDatabase()));
         connStr.add(String.format(
-                "jdbc:mysql://(host=%1$s,port=%2$d,connectionCollation=utf8mb4_unicode_ci,sslMode=DISABLED,allowPublicKeyRetrieval=true,sessionVariables=sql_mode='IGNORE_SPACE%3$sANSI'%3$sFOREIGN_KEY_CHECKS=0,user=%4$s,password=%5$s)/%6$s",
+                "jdbc:postgresql://(host=%1$s,port=%2$d,connectionCollation=utf8mb4_unicode_ci,sslMode=DISABLED,allowPublicKeyRetrieval=true,sessionVariables=sql_mode='IGNORE_SPACE%3$sANSI'%3$sFOREIGN_KEY_CHECKS=0,user=%4$s,password=%5$s)/%6$s",
                 getEncodedHostFromTestsuiteUrl(), getPortFromTestsuiteUrl(), "%2C", user, password, hostInfo.getDatabase()));
 
         for (String cs : connStr) {
@@ -11020,7 +11020,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
 
             // OK hosts that match one of the DNS/IP SANs.
             for (String okHost : okHosts) {
-                try (Connection testConn = getConnectionWithProps("jdbc:mysql://" + okHost + ":" + port + "/", props)) {
+                try (Connection testConn = getConnectionWithProps("jdbc:postgresql://" + okHost + ":" + port + "/", props)) {
                     this.rs = testConn.createStatement().executeQuery("SELECT 1");
                     assertTrue(this.rs.next());
                     assertEquals(1, this.rs.getInt(1));
@@ -11029,7 +11029,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
 
             // Not OK hosts that don't match any of the DNS/IP SANs.
             for (String notOkHost : notOkHosts) {
-                Exception e = assertThrows(CommunicationsException.class, () -> getConnectionWithProps("jdbc:mysql://" + notOkHost + ":" + port + "/", props));
+                Exception e = assertThrows(CommunicationsException.class, () -> getConnectionWithProps("jdbc:postgresql://" + notOkHost + ":" + port + "/", props));
                 assertNotNull(e.getCause());
                 assertNotNull(e.getCause().getCause());
                 String errMsg = e.getCause().getCause().getMessage();
@@ -11043,7 +11043,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
             // Not OK hosts are OK if not verifying identity, though.
             props.setProperty(PropertyKey.sslMode.getKeyName(), SslMode.VERIFY_CA.toString());
             for (String okHost : notOkHosts) {
-                try (Connection testConn = getConnectionWithProps("jdbc:mysql://" + okHost + ":" + port + "/", props)) {
+                try (Connection testConn = getConnectionWithProps("jdbc:postgresql://" + okHost + ":" + port + "/", props)) {
                     this.rs = testConn.createStatement().executeQuery("SELECT 1");
                     assertTrue(this.rs.next());
                     assertEquals(1, this.rs.getInt(1));
@@ -11073,7 +11073,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
         final int port = hostInfo.getPort();
 
         assertThrows(SQLNonTransientConnectionException.class, "Unsupported protocol version: 11\\. Likely connecting to an X Protocol port\\.",
-                () -> getConnectionWithProps("jdbc:mysql://" + host + ":" + port, ""));
+                () -> getConnectionWithProps("jdbc:postgresql://" + host + ":" + port, ""));
     }
 
     /**
@@ -11106,7 +11106,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
         List<Future<Exception>> futures = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             futures.add(executor.submit(() -> {
-                try (Connection testConn = getConnectionWithProps("jdbc:mysql://address=(protocol=pipe)(path=" + namedPipePath + ")?connectTimeout=500",
+                try (Connection testConn = getConnectionWithProps("jdbc:postgresql://address=(protocol=pipe)(path=" + namedPipePath + ")?connectTimeout=500",
                         props)) {
                     ResultSet testRs = testConn.createStatement().executeQuery("SELECT CURRENT_USER()");
                     assertTrue(testRs.next());
@@ -11185,13 +11185,13 @@ public class ConnectionRegressionTest extends BaseTestCase {
         for (String authPlugin : authenticationPlugins) {
             if (isPluginActive(this.stmt, authPlugin)) {
                 assertThrows(SQLException.class, String.format("Access denied for user '%s'@.*", systemUsername),
-                        () -> getConnectionWithProps(String.format("jdbc:mysql://%s:%s", getHostFromTestsuiteUrl(), getPortFromTestsuiteUrl()),
+                        () -> getConnectionWithProps(String.format("jdbc:postgresql://%s:%s", getHostFromTestsuiteUrl(), getPortFromTestsuiteUrl()),
                                 "sslMode=DISABLED,allowPublicKeyRetrieval=true,defaultAuthenticationPlugin=" + authPlugin));
 
                 createUser(quotedSystemUserName, "IDENTIFIED WITH " + authPlugin);
                 this.stmt.execute("GRANT ALL ON *.* TO " + quotedSystemUserName);
 
-                Connection testConn = getConnectionWithProps(String.format("jdbc:mysql://%s:%s", getHostFromTestsuiteUrl(), getPortFromTestsuiteUrl()),
+                Connection testConn = getConnectionWithProps(String.format("jdbc:postgresql://%s:%s", getHostFromTestsuiteUrl(), getPortFromTestsuiteUrl()),
                         "sslMode=DISABLED,allowPublicKeyRetrieval=true,defaultAuthenticationPlugin=" + authPlugin);
                 Statement testStmt = testConn.createStatement();
                 ResultSet testRs = testStmt.executeQuery("SELECT CURRENT_USER()");
@@ -11228,13 +11228,13 @@ public class ConnectionRegressionTest extends BaseTestCase {
         for (String authPlugin : authenticationPlugins) {
             if (isPluginActive(this.stmt, authPlugin)) {
                 assertThrows(SQLException.class, String.format("Access denied for user '%s'@.*", systemUsername),
-                        () -> getConnectionWithProps(String.format("jdbc:mysql://%s:%s", getHostFromTestsuiteUrl(), getPortFromTestsuiteUrl()),
+                        () -> getConnectionWithProps(String.format("jdbc:postgresql://%s:%s", getHostFromTestsuiteUrl(), getPortFromTestsuiteUrl()),
                                 "defaultAuthenticationPlugin=" + authPlugin + ",sslMode=DISABLED,allowPublicKeyRetreival=true"));
 
                 createUser(quotedSystemUsername, "IDENTIFIED WITH " + authPlugin + " BY 'testpwd'");
                 this.stmt.execute("GRANT ALL ON *.* TO " + quotedSystemUsername);
 
-                Connection testConn = getConnectionWithProps(String.format("jdbc:mysql://%s:%s", getHostFromTestsuiteUrl(), getPortFromTestsuiteUrl()),
+                Connection testConn = getConnectionWithProps(String.format("jdbc:postgresql://%s:%s", getHostFromTestsuiteUrl(), getPortFromTestsuiteUrl()),
                         "defaultAuthenticationPlugin=" + authPlugin + ",password=testpwd");
                 Statement testStmt = testConn.createStatement();
                 ResultSet testRs = testStmt.executeQuery("SELECT CURRENT_USER()");

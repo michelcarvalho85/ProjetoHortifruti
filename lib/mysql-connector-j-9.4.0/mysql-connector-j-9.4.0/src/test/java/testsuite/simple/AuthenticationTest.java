@@ -582,7 +582,7 @@ public class AuthenticationTest extends BaseTestCase {
             this.stmt.executeUpdate("GRANT ALL ON * TO wl14650_3fa");
             this.stmt.executeUpdate("FLUSH PRIVILEGES");
 
-            final StringBuilder urlBuilder1 = new StringBuilder("jdbc:mysql://").append(getHostFromTestsuiteUrl()).append(":").append(getPortFromTestsuiteUrl())
+            final StringBuilder urlBuilder1 = new StringBuilder("jdbc:postgresql://").append(getHostFromTestsuiteUrl()).append(":").append(getPortFromTestsuiteUrl())
                     .append("/");
             final String url1 = urlBuilder1.toString();
 
@@ -651,7 +651,7 @@ public class AuthenticationTest extends BaseTestCase {
             props.setProperty(PropertyKey.password1.getKeyName(), "wrongpwd");
             props.setProperty(PropertyKey.password2.getKeyName(), "wrongpwd");
             props.setProperty(PropertyKey.password3.getKeyName(), "wrongpwd");
-            final StringBuilder urlBuilder2 = new StringBuilder("jdbc:mysql://").append(getHostFromTestsuiteUrl()).append(":").append(getPortFromTestsuiteUrl())
+            final StringBuilder urlBuilder2 = new StringBuilder("jdbc:postgresql://").append(getHostFromTestsuiteUrl()).append(":").append(getPortFromTestsuiteUrl())
                     .append("/?").append("password1=wrongpwd&password2=wrongpwd&password3=wrongpwd");
             final String url2 = urlBuilder2.toString();
             try (Connection testConn = getConnectionWithProps(url2, props)) {
@@ -664,7 +664,7 @@ public class AuthenticationTest extends BaseTestCase {
 
             props.remove(PropertyKey.USER.getKeyName());
             props.remove(PropertyKey.PASSWORD.getKeyName());
-            final StringBuilder urlBuilder3 = new StringBuilder("jdbc:mysql://").append("wl14650_1fa:testpwd1@").append(getHostFromTestsuiteUrl()).append(":")
+            final StringBuilder urlBuilder3 = new StringBuilder("jdbc:postgresql://").append("wl14650_1fa:testpwd1@").append(getHostFromTestsuiteUrl()).append(":")
                     .append(getPortFromTestsuiteUrl()).append("/?").append("password1=wrongpwd&password2=wrongpwd&password3=wrongpwd");
             final String url3 = urlBuilder3.toString();
             try (Connection testConn = getConnectionWithProps(url3, props)) {
@@ -677,7 +677,7 @@ public class AuthenticationTest extends BaseTestCase {
 
             props.remove(PropertyKey.USER.getKeyName());
             props.remove(PropertyKey.PASSWORD.getKeyName());
-            final StringBuilder urlBuilder4 = new StringBuilder("jdbc:mysql://").append(getHostFromTestsuiteUrl()).append(":").append(getPortFromTestsuiteUrl())
+            final StringBuilder urlBuilder4 = new StringBuilder("jdbc:postgresql://").append(getHostFromTestsuiteUrl()).append(":").append(getPortFromTestsuiteUrl())
                     .append("/?").append("user=wl14650_1fa&password=testpwd1&password1=wrongpwd&password2=wrongpwd&password3=wrongpwd");
             final String url4 = urlBuilder4.toString();
             try (Connection testConn = getConnectionWithProps(url4, props)) {
@@ -688,7 +688,7 @@ public class AuthenticationTest extends BaseTestCase {
                 assertEquals("wl14650_1fa", this.rs.getString(2).split("@")[0]);
             }
 
-            final StringBuilder urlBuilder5 = new StringBuilder("jdbc:mysql://").append(getHostFromTestsuiteUrl()).append(":").append(getPortFromTestsuiteUrl())
+            final StringBuilder urlBuilder5 = new StringBuilder("jdbc:postgresql://").append(getHostFromTestsuiteUrl()).append(":").append(getPortFromTestsuiteUrl())
                     .append("/?").append("password1=wrongpwd&password2=wrongpwd&password3=wrongpwd&sslMode=REQUIRED");
             final String url5 = urlBuilder5.toString();
             try (Connection testConn = DriverManager.getConnection(url5, "wl14650_1fa", "testpwd1")) {
@@ -704,7 +704,7 @@ public class AuthenticationTest extends BaseTestCase {
             props.remove(PropertyKey.password1.getKeyName());
             props.remove(PropertyKey.password2.getKeyName());
             props.remove(PropertyKey.password3.getKeyName());
-            final StringBuilder urlBuilder6 = new StringBuilder("jdbc:mysql://").append(getHostFromTestsuiteUrl()).append(":").append(getPortFromTestsuiteUrl())
+            final StringBuilder urlBuilder6 = new StringBuilder("jdbc:postgresql://").append(getHostFromTestsuiteUrl()).append(":").append(getPortFromTestsuiteUrl())
                     .append("/?").append("password1=testpwd1&password2=wrongpwd&password3=wrongpwd");
             final String url6 = urlBuilder6.toString();
             try (Connection testConn = getConnectionWithProps(url6, props)) {
@@ -719,7 +719,7 @@ public class AuthenticationTest extends BaseTestCase {
             props.setProperty(PropertyKey.USER.getKeyName(), "wl14650_1fa");
             props.setProperty(PropertyKey.PASSWORD.getKeyName(), "wrongpwd");
             props.setProperty(PropertyKey.password1.getKeyName(), "testpwd1");
-            final StringBuilder urlBuilder7 = new StringBuilder("jdbc:mysql://").append(getHostFromTestsuiteUrl()).append(":").append(getPortFromTestsuiteUrl())
+            final StringBuilder urlBuilder7 = new StringBuilder("jdbc:postgresql://").append(getHostFromTestsuiteUrl()).append(":").append(getPortFromTestsuiteUrl())
                     .append("/");
             final String url7 = urlBuilder7.toString();
             assertThrows(SQLException.class, "Access denied for user 'wl14650_1fa'@.* \\(using password: YES\\)", () -> getConnectionWithProps(url7, props));
@@ -793,7 +793,7 @@ public class AuthenticationTest extends BaseTestCase {
             Path badIdTokenFile = Files.createTempFile("wl16490_jwt_bad_", ".txt");
             Files.write(badIdTokenFile, badIdToken);
 
-            String url = String.format("jdbc:mysql://%s:%s/", getHostFromTestsuiteUrl(), getPortFromTestsuiteUrl());
+            String url = String.format("jdbc:postgresql://%s:%s/", getHostFromTestsuiteUrl(), getPortFromTestsuiteUrl());
             Properties props = new Properties();
 
             // TS.1.a: Good Identity Token file (1st factor).

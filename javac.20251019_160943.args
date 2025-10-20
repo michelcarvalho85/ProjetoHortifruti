@@ -1,0 +1,5 @@
+-cp
+.;lib\\postgresql-42.7.4.jar
+-d
+out
+C:\\Users\\miche\\Desktop\\ProjetoHortisystem\\Hortisystem\\main.java

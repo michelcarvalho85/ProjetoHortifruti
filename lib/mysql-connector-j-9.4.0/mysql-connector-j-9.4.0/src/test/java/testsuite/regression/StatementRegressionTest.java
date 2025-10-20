@@ -5778,7 +5778,7 @@ public class StatementRegressionTest extends BaseTestCase {
         UnreliableSocketFactory.flushAllStaticData();
         UnreliableSocketFactory.mapHost("first", host);
 
-        Connection testConn = getConnectionWithProps("jdbc:mysql://first:" + port + "/" + db, props);
+        Connection testConn = getConnectionWithProps("jdbc:postgresql://first:" + port + "/" + db, props);
         testConn.setAutoCommit(false);
         testConn.createStatement().execute("SELECT 1");
         UnreliableSocketFactory.downHost("first");

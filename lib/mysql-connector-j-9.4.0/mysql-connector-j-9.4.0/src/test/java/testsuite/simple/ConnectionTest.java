@@ -670,7 +670,7 @@ public class ConnectionTest extends BaseTestCase {
 
     @Test
     public void testCannedConfigs() throws Exception {
-        Properties cannedProps = ConnectionUrl.getConnectionUrlInstance("jdbc:mysql:///?useConfigs=clusterBase", null).getConnectionArgumentsAsProperties();
+        Properties cannedProps = ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql:///?useConfigs=clusterBase", null).getConnectionArgumentsAsProperties();
 
         assertTrue("true".equals(cannedProps.getProperty(PropertyKey.autoReconnect.getKeyName())));
         assertTrue("false".equals(cannedProps.getProperty(PropertyKey.failOverReadOnly.getKeyName())));
@@ -678,7 +678,7 @@ public class ConnectionTest extends BaseTestCase {
         // this will fail, but we test that too
         assertThrows(InvalidConnectionAttributeException.class, "Can't find configuration template named 'clusterBase2'", () -> {
             try {
-                ConnectionUrl.getConnectionUrlInstance("jdbc:mysql:///?useConfigs=clusterBase,clusterBase2", null);
+                ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql:///?useConfigs=clusterBase,clusterBase2", null);
                 return null;
             } catch (Throwable t) {
                 t.printStackTrace();
@@ -1367,7 +1367,7 @@ public class ConnectionTest extends BaseTestCase {
         String password = parsedProps.getProperty(PropertyKey.PASSWORD.getKeyName());
         String database = parsedProps.getProperty(PropertyKey.DBNAME.getKeyName());
 
-        String newUrl = String.format("jdbc:mysql://address=(protocol=tcp)(host=%s)(port=%s)(user=%s)(password=%s)/%s", TestUtils.encodePercent(host), port,
+        String newUrl = String.format("jdbc:postgresql://address=(protocol=tcp)(host=%s)(port=%s)(user=%s)(password=%s)/%s", TestUtils.encodePercent(host), port,
                 user != null ? user : "", password != null ? password : "", database);
 
         Properties props = getHostFreePropertiesFromTestsuiteUrl();
@@ -1527,7 +1527,7 @@ public class ConnectionTest extends BaseTestCase {
         for (String host : ipv6Addrs) {
             if (TestUtils.serverListening(host, port)) {
                 atLeastOne = true;
-                String ipv6Url = String.format("jdbc:mysql://address=(protocol=tcp)(host=%s)(port=%d)", TestUtils.encodePercent(host), port);
+                String ipv6Url = String.format("jdbc:postgresql://address=(protocol=tcp)(host=%s)(port=%d)", TestUtils.encodePercent(host), port);
 
                 Connection testConn = null;
                 Statement testStmt = null;

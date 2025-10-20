@@ -224,7 +224,7 @@ public class DataSourceTest extends BaseTestCase {
         ds.setServerName("test.server.name");
         assertEquals("test.server.name", ds.getServerName());
 
-        assertEquals("jdbc:mysql://test.server.name:3308/", ds.getUrl());
+        assertEquals("jdbc:postgresql://test.server.name:3308/", ds.getUrl());
         ds.setUrl("http://192.168.1.1/");
         assertEquals("http://192.168.1.1/", ds.getUrl());
 
@@ -300,11 +300,11 @@ public class DataSourceTest extends BaseTestCase {
         MysqlDataSource testDataSource = new MysqlDataSource();
         testDataSource.setServerName("connectorj.mysql.com");
         testDataSource.setDatabaseName("mysql?connector/j");
-        assertEquals("jdbc:mysql://connectorj.mysql.com:3306/mysql%3Fconnector%2Fj", testDataSource.getUrl());
+        assertEquals("jdbc:postgresql://connectorj.mysql.com:5432/mysql%3Fconnector%2Fj", testDataSource.getUrl());
 
         testDataSource.setServerName("connectorj.mysql.com:12345/fakeDB?foo=");
         testDataSource.setDatabaseName("goodDB");
-        assertEquals("jdbc:mysql://connectorj.mysql.com%3A12345%2FfakeDB%3Ffoo%3D:3306/goodDB", testDataSource.getUrl());
+        assertEquals("jdbc:postgresql://connectorj.mysql.com%3A12345%2FfakeDB%3Ffoo%3D:5432/goodDB", testDataSource.getUrl());
     }
 
 }

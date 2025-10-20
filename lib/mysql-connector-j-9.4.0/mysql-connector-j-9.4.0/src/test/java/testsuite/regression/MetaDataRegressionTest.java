@@ -68,7 +68,7 @@ import com.mysql.cj.conf.PropertyDefinitions.SslMode;
 import com.mysql.cj.conf.PropertyKey;
 import com.mysql.cj.exceptions.MysqlErrorNumbers;
 import com.mysql.cj.jdbc.ClientPreparedStatement;
-import com.mysql.cj.jdbc.Driver;
+import org.postgresql.Driver;
 import com.mysql.cj.jdbc.JdbcConnection;
 import com.mysql.cj.jdbc.NonRegisteringDriver;
 import com.mysql.cj.protocol.Resultset;
@@ -1483,7 +1483,7 @@ public class MetaDataRegressionTest extends BaseTestCase {
      */
     @Test
     public void testBug22628() throws Exception {
-        DriverPropertyInfo[] dpi = new NonRegisteringDriver().getPropertyInfo("jdbc:mysql://bogus:9999", new Properties());
+        DriverPropertyInfo[] dpi = new NonRegisteringDriver().getPropertyInfo("jdbc:postgresql://bogus:9999", new Properties());
 
         boolean foundHost = false;
         boolean foundPort = false;
@@ -2593,7 +2593,7 @@ public class MetaDataRegressionTest extends BaseTestCase {
      */
     @Test
     public void testBug61150() throws Exception {
-        StringBuilder newUrlToTestNoDB = new StringBuilder("jdbc:mysql://");
+        StringBuilder newUrlToTestNoDB = new StringBuilder("jdbc:postgresql://");
         newUrlToTestNoDB.append(getEncodedHostPortPairFromTestsuiteUrl()).append("/");
 
         Statement savedSt = this.stmt;

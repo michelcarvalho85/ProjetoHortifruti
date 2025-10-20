@@ -559,10 +559,10 @@ public class ConnectionUrlTest {
     public void testConnectionStringAcceptsUrl() {
         // Supported URLs:
         assertTrue(ConnectionUrl.acceptsUrl("jdbc:mysql:"));
-        assertTrue(ConnectionUrl.acceptsUrl("jdbc:mysql://somehost:1234/db?key=value"));
+        assertTrue(ConnectionUrl.acceptsUrl("jdbc:postgresql://somehost:1234/db?key=value"));
         assertTrue(ConnectionUrl.acceptsUrl(
-                "jdbc:mysql://verylonghostname01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789:1234/db?key=value"));
-        assertTrue(ConnectionUrl.acceptsUrl("jdbc:mysql://127.0.0.1:1234/db?key=value"));
+                "jdbc:postgresql://verylonghostname01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789:1234/db?key=value"));
+        assertTrue(ConnectionUrl.acceptsUrl("jdbc:postgresql://127.0.0.1:1234/db?key=value"));
         assertTrue(ConnectionUrl.acceptsUrl("jdbc:mysql:loadbalance:"));
         assertTrue(ConnectionUrl.acceptsUrl("jdbc:mysql:loadbalance://somehost:1234/db?key=value"));
         assertTrue(ConnectionUrl.acceptsUrl(
@@ -843,12 +843,12 @@ public class ConnectionUrlTest {
     @Test
     public void testConnectionUrlWithWrongConnectionString() {
         List<String> connStr = new ArrayList<>();
-        connStr.add("jdbc:mysql://johndoe:secret@janedoe:secret@myhost:1234/db?key=value");
-        connStr.add("jdbc:mysql://johndoe:secret@@myhost:1234/db?key=value");
-        connStr.add("jdbc:mysql://johndoe:secret@myhost:abcd/db?key=value");
-        connStr.add("jdbc:mysql://johndoe:secret@myhost:1234//db?key=value");
-        connStr.add("jdbc:mysql://johndoe:secret@myhost:1234/db??key=value");
-        connStr.add("jdbc:mysql://johndoe:secret@myhost:1234/db?=value");
+        connStr.add("jdbc:postgresql://johndoe:secret@janedoe:secret@myhost:1234/db?key=value");
+        connStr.add("jdbc:postgresql://johndoe:secret@@myhost:1234/db?key=value");
+        connStr.add("jdbc:postgresql://johndoe:secret@myhost:abcd/db?key=value");
+        connStr.add("jdbc:postgresql://johndoe:secret@myhost:1234//db?key=value");
+        connStr.add("jdbc:postgresql://johndoe:secret@myhost:1234/db??key=value");
+        connStr.add("jdbc:postgresql://johndoe:secret@myhost:1234/db?=value");
 
         for (String cs : connStr) {
             assertThrows(WrongArgumentException.class, () -> {
@@ -867,11 +867,11 @@ public class ConnectionUrlTest {
         props1.setProperty("propKey", "propValue");
         Properties props2 = new Properties(props1);
 
-        ConnectionUrl cu1 = ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://localhost:3306/?param=value", null);
-        ConnectionUrl cu2 = ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://localhost:3306/?param=value", props1);
-        ConnectionUrl cu3 = ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://localhost:3306/?param=value", props1);
-        ConnectionUrl cu4 = ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://localhost:3306/?param=value", props2);
-        ConnectionUrl cu5 = ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://localhost:3306/?param=value&flag", props1);
+        ConnectionUrl cu1 = ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://localhost:5432/?param=value", null);
+        ConnectionUrl cu2 = ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://localhost:5432/?param=value", props1);
+        ConnectionUrl cu3 = ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://localhost:5432/?param=value", props1);
+        ConnectionUrl cu4 = ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://localhost:5432/?param=value", props2);
+        ConnectionUrl cu5 = ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://localhost:5432/?param=value&flag", props1);
 
         assertNotSame(cu1, cu2);
         assertSame(cu2, cu3);
@@ -887,7 +887,7 @@ public class ConnectionUrlTest {
     public void testDefaultValues() {
         Map<String, Integer> connStr = new HashMap<>();
         connStr.put("jdbc:mysql:", 3306);
-        connStr.put("jdbc:mysql://,", 3306);
+        connStr.put("jdbc:postgresql://,", 3306);
         connStr.put("jdbc:mysql:loadbalance://,", 3306);
         connStr.put("jdbc:mysql:replication://,", 3306);
         connStr.put("mysqlx:", 33060);
@@ -914,9 +914,9 @@ public class ConnectionUrlTest {
         Properties propsFromFile = ConnectionUrl.getPropertiesFromConfigFiles("fullDebug");
 
         List<String> connStr = new ArrayList<>();
-        connStr.add("jdbc:mysql://johndoe:secret@mysql:1234/sakila");
-        connStr.add("jdbc:mysql://johndoe:secret@mysql:1234/sakila?useConfigs=fullDebug");
-        connStr.add("jdbc:mysql://johndoe:secret@address=(host=mysql)(port=1234)(useConfigs=fullDebug)/sakila");
+        connStr.add("jdbc:postgresql://johndoe:secret@mysql:1234/sakila");
+        connStr.add("jdbc:postgresql://johndoe:secret@mysql:1234/sakila?useConfigs=fullDebug");
+        connStr.add("jdbc:postgresql://johndoe:secret@address=(host=mysql)(port=1234)(useConfigs=fullDebug)/sakila");
 
         for (String cs : connStr) {
             Properties props = new Properties();
@@ -951,16 +951,16 @@ public class ConnectionUrlTest {
     public void testPropertiesTransformer() {
         String propsTransClassName = ConnectionPropertiesTest.class.getName();
         List<String> connStr = new ArrayList<>();
-        connStr.add("jdbc:mysql://johndoe:secret@mysql:1234/sakila");
-        connStr.add("jdbc:mysql://johndoe:secret@mysql:1234/sakila?stars=*");
-        connStr.add("jdbc:mysql://johndoe:secret@address=(host=mysql)(port=1234)/sakila");
-        connStr.add("jdbc:mysql://johndoe:secret@address=(host=mysql)(port=1234)(stars=*)/sakila");
-        connStr.add("jdbc:mysql://johndoe:secret@address=(host=mysql)(port=1234)/sakila?stars=*");
-        connStr.add("jdbc:mysql://johndoe:secret@mysql:1234/sakila?propertiesTransform=" + propsTransClassName);
-        connStr.add("jdbc:mysql://johndoe:secret@mysql:1234/sakila?stars=*&propertiesTransform=" + propsTransClassName);
-        connStr.add("jdbc:mysql://johndoe:secret@address=(host=mysql)(port=1234)(propertiesTransform=" + propsTransClassName + ")/sakila");
-        connStr.add("jdbc:mysql://johndoe:secret@address=(host=mysql)(port=1234)(propertiesTransform=" + propsTransClassName + ")(stars=*)/sakila");
-        connStr.add("jdbc:mysql://johndoe:secret@address=(host=mysql)(port=1234)(propertiesTransform=" + propsTransClassName + ")/sakila?stars=*");
+        connStr.add("jdbc:postgresql://johndoe:secret@mysql:1234/sakila");
+        connStr.add("jdbc:postgresql://johndoe:secret@mysql:1234/sakila?stars=*");
+        connStr.add("jdbc:postgresql://johndoe:secret@address=(host=mysql)(port=1234)/sakila");
+        connStr.add("jdbc:postgresql://johndoe:secret@address=(host=mysql)(port=1234)(stars=*)/sakila");
+        connStr.add("jdbc:postgresql://johndoe:secret@address=(host=mysql)(port=1234)/sakila?stars=*");
+        connStr.add("jdbc:postgresql://johndoe:secret@mysql:1234/sakila?propertiesTransform=" + propsTransClassName);
+        connStr.add("jdbc:postgresql://johndoe:secret@mysql:1234/sakila?stars=*&propertiesTransform=" + propsTransClassName);
+        connStr.add("jdbc:postgresql://johndoe:secret@address=(host=mysql)(port=1234)(propertiesTransform=" + propsTransClassName + ")/sakila");
+        connStr.add("jdbc:postgresql://johndoe:secret@address=(host=mysql)(port=1234)(propertiesTransform=" + propsTransClassName + ")(stars=*)/sakila");
+        connStr.add("jdbc:postgresql://johndoe:secret@address=(host=mysql)(port=1234)(propertiesTransform=" + propsTransClassName + ")/sakila?stars=*");
 
         for (String cs : connStr) {
             Properties props = new Properties();
@@ -1190,12 +1190,12 @@ public class ConnectionUrlTest {
     public void testReplaceLegacyPropertyValues() throws Exception {
         /* Test zeroDateTimeBehavior convertToNull-> CONVERT_TO_NULL replacement (BUG#91421) */
         List<String> connStr = new ArrayList<>();
-        connStr.add("jdbc:mysql://somehost:1234/db");
-        connStr.add("jdbc:mysql://somehost:1234/db?key=value&zeroDateTimeBehavior=convertToNull");
-        connStr.add("jdbc:mysql://127.0.0.1:1234/db");
-        connStr.add("jdbc:mysql://127.0.0.1:1234/db?key=value&zeroDateTimeBehavior=convertToNull");
-        connStr.add("jdbc:mysql://(port=3306,user=root,password=pwd,zeroDateTimeBehavior=convertToNull)/test");
-        connStr.add("jdbc:mysql://address=(port=3306)(user=root)(password=pwd)(zeroDateTimeBehavior=convertToNull)/test");
+        connStr.add("jdbc:postgresql://somehost:1234/db");
+        connStr.add("jdbc:postgresql://somehost:1234/db?key=value&zeroDateTimeBehavior=convertToNull");
+        connStr.add("jdbc:postgresql://127.0.0.1:1234/db");
+        connStr.add("jdbc:postgresql://127.0.0.1:1234/db?key=value&zeroDateTimeBehavior=convertToNull");
+        connStr.add("jdbc:postgresql://(port=3306,user=root,password=pwd,zeroDateTimeBehavior=convertToNull)/test");
+        connStr.add("jdbc:postgresql://address=(port=3306)(user=root)(password=pwd)(zeroDateTimeBehavior=convertToNull)/test");
 
         Properties props = new Properties();
         props.setProperty(PropertyKey.zeroDateTimeBehavior.getKeyName(), "convertToNull");
@@ -1227,18 +1227,18 @@ public class ConnectionUrlTest {
         assertThrows(InvalidConnectionAttributeException.class, "Specifying multiple host names with DNS SRV lookup is not allowed\\.",
                 () -> ConnectionUrl.getConnectionUrlInstance("jdbc:mysql+srv://hostname1,hostname2", null));
         assertThrows(InvalidConnectionAttributeException.class, "Specifying multiple host names with DNS SRV lookup is not allowed\\.",
-                () -> ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname1,hostname2?dnsSrv=true", null));
+                () -> ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname1,hostname2?dnsSrv=true", null));
         assertThrows(InvalidConnectionAttributeException.class, "Specifying multiple host names with DNS SRV lookup is not allowed\\.",
-                () -> ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname1,hostname2", props));
+                () -> ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname1,hostname2", props));
 
         // Port specified.
         props.setProperty(PropertyKey.PORT.getKeyName(), "12345");
         assertThrows(InvalidConnectionAttributeException.class, "Specifying a port number with DNS SRV lookup is not allowed\\.",
                 () -> ConnectionUrl.getConnectionUrlInstance("jdbc:mysql+srv://hostname:12345", null));
         assertThrows(InvalidConnectionAttributeException.class, "Specifying a port number with DNS SRV lookup is not allowed\\.",
-                () -> ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname?dnsSrv=true&port=12345", null));
+                () -> ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname?dnsSrv=true&port=12345", null));
         assertThrows(InvalidConnectionAttributeException.class, "Specifying a port number with DNS SRV lookup is not allowed\\.",
-                () -> ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname", props));
+                () -> ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname", props));
         props.remove(PropertyKey.PORT.getKeyName());
 
         // Conflicting options.
@@ -1254,9 +1254,9 @@ public class ConnectionUrlTest {
         assertThrows(InvalidConnectionAttributeException.class, "Using named pipes with DNS SRV lookup is not allowed\\.",
                 () -> ConnectionUrl.getConnectionUrlInstance("jdbc:mysql+srv://hostname?protocol=pipe", null));
         assertThrows(InvalidConnectionAttributeException.class, "Using named pipes with DNS SRV lookup is not allowed\\.",
-                () -> ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname?dnsSrv=true&protocol=pipe", null));
+                () -> ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname?dnsSrv=true&protocol=pipe", null));
         assertThrows(InvalidConnectionAttributeException.class, "Using named pipes with DNS SRV lookup is not allowed\\.",
-                () -> ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname", props));
+                () -> ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname", props));
         props.remove(PropertyKey.PROTOCOL.getKeyName());
 
         // Resolving hosts fails.
@@ -1268,21 +1268,21 @@ public class ConnectionUrlTest {
         assertEquals(FailoverDnsSrvConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:mysql+srv://hostname?dnsSrv=true", null).getClass());
         assertEquals(FailoverDnsSrvConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:mysql+srv://hostname?dnsSrv=true", props).getClass());
         assertEquals(FailoverDnsSrvConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:mysql+srv://hostname?dnsSrv=false", props).getClass());
-        assertEquals(FailoverDnsSrvConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname?dnsSrv=true", null).getClass());
-        assertEquals(FailoverDnsSrvConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname", props).getClass());
-        assertEquals(FailoverDnsSrvConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname?dnsSrv=true", props).getClass());
-        assertEquals(FailoverDnsSrvConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname?dnsSrv=false", props).getClass());
+        assertEquals(FailoverDnsSrvConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname?dnsSrv=true", null).getClass());
+        assertEquals(FailoverDnsSrvConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname", props).getClass());
+        assertEquals(FailoverDnsSrvConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname?dnsSrv=true", props).getClass());
+        assertEquals(FailoverDnsSrvConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname?dnsSrv=false", props).getClass());
 
         // Correct ConnectionUrl instances - jdbc:mysql:.
         props.setProperty(PropertyKey.dnsSrv.getKeyName(), "false");
-        assertEquals(SingleConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname?dnsSrv=false", null).getClass());
-        assertEquals(SingleConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname", props).getClass());
-        assertEquals(SingleConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname?dnsArv=false", props).getClass());
-        assertEquals(SingleConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname?dnsSrv=true", props).getClass());
-        assertEquals(FailoverConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname1,hostname2?dnsSrv=false", null).getClass());
-        assertEquals(FailoverConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname1,hostname2", props).getClass());
-        assertEquals(FailoverConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname1,hostname2?dnsArv=false", props).getClass());
-        assertEquals(FailoverConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:mysql://hostname1,hostname2?dnsSrv=true", props).getClass());
+        assertEquals(SingleConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname?dnsSrv=false", null).getClass());
+        assertEquals(SingleConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname", props).getClass());
+        assertEquals(SingleConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname?dnsArv=false", props).getClass());
+        assertEquals(SingleConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname?dnsSrv=true", props).getClass());
+        assertEquals(FailoverConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname1,hostname2?dnsSrv=false", null).getClass());
+        assertEquals(FailoverConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname1,hostname2", props).getClass());
+        assertEquals(FailoverConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname1,hostname2?dnsArv=false", props).getClass());
+        assertEquals(FailoverConnectionUrl.class, ConnectionUrl.getConnectionUrlInstance("jdbc:postgresql://hostname1,hostname2?dnsSrv=true", props).getClass());
     }
 
     /**
@@ -1595,22 +1595,22 @@ public class ConnectionUrlTest {
     public void testBug28150662() {
         List<String> connStr = new ArrayList<>();
         connStr.add(
-                "jdbc:mysql://localhost:3306/db1?connectionCollation=utf8mb4_unicode_ci&user=user1&sessionVariables=sql_mode='IGNORE_SPACE,ANSI',FOREIGN_KEY_CHECKS=0");
+                "jdbc:postgresql://localhost:5432/db1?connectionCollation=utf8mb4_unicode_ci&user=user1&sessionVariables=sql_mode='IGNORE_SPACE,ANSI',FOREIGN_KEY_CHECKS=0");
         connStr.add(
-                "jdbc:mysql://localhost:3306/db1?connectionCollation=utf8mb4_unicode_ci&sessionVariables=sql_mode='IGNORE_SPACE,ANSI',FOREIGN_KEY_CHECKS=0&user=user1");
+                "jdbc:postgresql://localhost:5432/db1?connectionCollation=utf8mb4_unicode_ci&sessionVariables=sql_mode='IGNORE_SPACE,ANSI',FOREIGN_KEY_CHECKS=0&user=user1");
         connStr.add(
-                "jdbc:mysql://address=(host=localhost)(port=3306)(connectionCollation=utf8mb4_unicode_ci)(sessionVariables=sql_mode='IGNORE_SPACE,ANSI',FOREIGN_KEY_CHECKS=0)(user=user1)/db1");
+                "jdbc:postgresql://address=(host=localhost)(port=3306)(connectionCollation=utf8mb4_unicode_ci)(sessionVariables=sql_mode='IGNORE_SPACE,ANSI',FOREIGN_KEY_CHECKS=0)(user=user1)/db1");
         connStr.add(
-                "jdbc:mysql://(host=localhost,port=3306,connectionCollation=utf8mb4_unicode_ci,sessionVariables=sql_mode='IGNORE_SPACE%2CANSI'%2CFOREIGN_KEY_CHECKS=0,user=user1)/db1");
+                "jdbc:postgresql://(host=localhost,port=3306,connectionCollation=utf8mb4_unicode_ci,sessionVariables=sql_mode='IGNORE_SPACE%2CANSI'%2CFOREIGN_KEY_CHECKS=0,user=user1)/db1");
 
         connStr.add(
-                "jdbc:mysql://verylonghostname01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789:3306/db1?connectionCollation=utf8mb4_unicode_ci&user=user1&sessionVariables=sql_mode='IGNORE_SPACE,ANSI',FOREIGN_KEY_CHECKS=0");
+                "jdbc:postgresql://verylonghostname01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789:5432/db1?connectionCollation=utf8mb4_unicode_ci&user=user1&sessionVariables=sql_mode='IGNORE_SPACE,ANSI',FOREIGN_KEY_CHECKS=0");
         connStr.add(
-                "jdbc:mysql://verylonghostname01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789:3306/db1?connectionCollation=utf8mb4_unicode_ci&sessionVariables=sql_mode='IGNORE_SPACE,ANSI',FOREIGN_KEY_CHECKS=0&user=user1");
+                "jdbc:postgresql://verylonghostname01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789:5432/db1?connectionCollation=utf8mb4_unicode_ci&sessionVariables=sql_mode='IGNORE_SPACE,ANSI',FOREIGN_KEY_CHECKS=0&user=user1");
         connStr.add(
-                "jdbc:mysql://address=(host=verylonghostname01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789)(port=3306)(connectionCollation=utf8mb4_unicode_ci)(sessionVariables=sql_mode='IGNORE_SPACE,ANSI',FOREIGN_KEY_CHECKS=0)(user=user1)/db1");
+                "jdbc:postgresql://address=(host=verylonghostname01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789)(port=3306)(connectionCollation=utf8mb4_unicode_ci)(sessionVariables=sql_mode='IGNORE_SPACE,ANSI',FOREIGN_KEY_CHECKS=0)(user=user1)/db1");
         connStr.add(
-                "jdbc:mysql://(host=verylonghostname01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789,port=3306,connectionCollation=utf8mb4_unicode_ci,sessionVariables=sql_mode='IGNORE_SPACE%2CANSI'%2CFOREIGN_KEY_CHECKS=0,user=user1)/db1");
+                "jdbc:postgresql://(host=verylonghostname01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789,port=3306,connectionCollation=utf8mb4_unicode_ci,sessionVariables=sql_mode='IGNORE_SPACE%2CANSI'%2CFOREIGN_KEY_CHECKS=0,user=user1)/db1");
 
         for (String cs : connStr) {
             ConnectionUrl url = ConnectionUrl.getConnectionUrlInstance(cs, null);

@@ -53,7 +53,7 @@ public class ExceptionsTest extends BaseTestCase {
         assertThrows(SQLException.class,
                 "Communications link failure\n\nThe last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.",
                 () -> {
-                    new NonRegisteringDriver().connect("jdbc:mysql://wrongurl?user=usr", null);
+                    new NonRegisteringDriver().connect("jdbc:postgresql://wrongurl?user=usr", null);
                     return null;
                 });
         assertThrows(SQLException.class, ".*Can't find configuration template named 'wrongvalue'", () -> {

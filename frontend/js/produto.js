@@ -1,18 +1,15 @@
-// produto.js — CRUD de produtos integrado ao backend (Spark + MySQL)
-
+// produto.js — CRUD de produtos integrado ao backend (Spark + MySQL) — corrigido e robusto
 (function () {
-  // 🔧 use sempre o mesmo host do CORS configurado no servidor
   const API = "http://127.0.0.1:8080";
 
   const tabelaBody = document.querySelector("#tabela-produtos tbody");
   const btnAdd = document.getElementById("adicionar-btn");
-
   const inputNome = document.getElementById("nome");
   const inputPreco = document.getElementById("preco");
   const inputQtd = document.getElementById("quantidade");
   const selectCat = document.getElementById("categoria");
+  let editandoId = null;
 
-  // 🔁 converte valores do select (singular) para enum (plural) do backend
   const mapCategoria = (val) => {
     const up = String(val || "").toUpperCase();
     if (up === "FRUTA") return "FRUTAS";
@@ -27,47 +24,47 @@
     return "R$ " + num.toFixed(2);
   };
 
-  // ----------------------------------------------
-  // 🔹 Carregar lista de produtos
-  // ----------------------------------------------
+  function getRoleAtual() {
+    // ✅ usuário com fallbacks (HS_getUsuarioAtivo -> localStorage -> data-role)
+    let usuario = null;
+    if (window.HS_getUsuarioAtivo) {
+      try { usuario = window.HS_getUsuarioAtivo(); } catch (e) {}
+    }
+    if (!usuario) {
+      try { usuario = JSON.parse(localStorage.getItem("usuarioAtivo") || "null"); } catch (e) {}
+    }
+    return ((usuario && usuario.role) || document.body.dataset.role || "").toUpperCase();
+  }
+
   async function carregarProdutos() {
     try {
-      const resp = await fetch(`${API}/produtos`, {
-        method: "GET",
-        headers: { "Accept": "application/json" },
-      });
-
+      const resp = await fetch(`${API}/produtos`);
       if (!resp.ok) throw new Error(`GET /produtos -> ${resp.status}`);
-
       const lista = await resp.json();
-      console.log("📦 Produtos recebidos:", lista);
-
       tabelaBody.innerHTML = "";
 
-      if (!Array.isArray(lista)) {
-        throw new Error("Resposta inesperada: não é uma lista de produtos");
-      }
+      const roleAtual = getRoleAtual();
+
+      // mostrar/ocultar botão Adicionar aqui também (reforço local)
+      if (btnAdd) btnAdd.style.display = roleAtual === "ADMIN" ? "inline-block" : "none";
 
       lista.forEach((p) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${p.id ?? "-"}</td>
-          <td>${p.nome ?? "-"}</td>
-          <td>${fmt(p.preco ?? 0)}</td>
-          <td>${p.quantidade ?? 0}</td>
-          <td>${p.categoria ?? "-"}</td>
+          <td>${p.id}</td>
+          <td>${p.nome}</td>
+          <td>${fmt(p.preco)}</td>
+          <td>${p.quantidade}</td>
+          <td>${p.categoria}</td>
           <td class="acoes"></td>
         `;
-
         const acoes = tr.querySelector(".acoes");
 
-        // Mostra botões somente se for ADMIN
-        const usuario = window.HS_getUsuarioAtivo ? window.HS_getUsuarioAtivo() : null;
-        if (usuario && usuario.role === "ADMIN") {
+        if (roleAtual === "ADMIN") {
           const btnEditar = document.createElement("button");
           btnEditar.textContent = "Editar";
           btnEditar.className = "btn-editar";
-          btnEditar.onclick = () => editar(p.id);
+          btnEditar.onclick = () => editar(p);
 
           const btnRemover = document.createElement("button");
           btnRemover.textContent = "Remover";
@@ -83,86 +80,109 @@
       });
     } catch (e) {
       console.error("❌ Erro ao carregar produtos:", e);
-      alert("❌ Erro ao carregar produtos. Verifique se o servidor está rodando.");
     }
   }
 
-  // ----------------------------------------------
-  // 🔹 Adicionar produto
-  // ----------------------------------------------
-  async function adicionar() {
+  async function salvarProduto() {
     const payload = {
-      nome: (inputNome.value || "").trim(),
+      nome: inputNome.value.trim(),
       preco: parseFloat(String(inputPreco.value).replace(",", ".")),
       quantidade: parseInt(inputQtd.value, 10),
       categoria: mapCategoria(selectCat.value),
     };
 
-    if (!payload.nome || Number.isNaN(payload.preco) || Number.isNaN(payload.quantidade)) {
-      alert("⚠️ Preencha nome, preço (ex: 2.99) e quantidade (ex: 5).");
-      return;
+    // ✅ inclui papel no header (se existir)
+    let role = (document.body.dataset.role || "").toUpperCase();
+    if (!role && window.HS_getUsuarioAtivo) {
+      try { role = (window.HS_getUsuarioAtivo()?.role || "").toUpperCase(); } catch (_) {}
+    }
+    if (!role) {
+      try { role = (JSON.parse(localStorage.getItem("usuarioAtivo")||"null")?.role || "").toUpperCase(); } catch (_) {}
     }
 
-    const usuario = window.HS_getUsuarioAtivo ? window.HS_getUsuarioAtivo() : null;
+    const metodo = editandoId ? "PUT" : "POST";
+    const url = editandoId ? `${API}/produtos/${editandoId}` : `${API}/produtos`;
 
     try {
-      const resp = await fetch(`${API}/produtos`, {
-        method: "POST",
+      const resp = await fetch(url, {
+        method: metodo,
         headers: {
           "Content-Type": "application/json",
-          "X-User-Role": usuario?.role || "FUNCIONARIO",
+          "X-User-Role": role || "FUNCIONARIO",
         },
         body: JSON.stringify(payload),
       });
 
-      if (resp.status === 201) {
+      if (resp.ok) {
         limparCampos();
         await carregarProdutos();
+        editandoId = null;
+        btnAdd.textContent = "Adicionar Produto";
       } else {
         const msg = await resp.text();
-        alert("❌ Erro ao adicionar: " + msg);
+        alert("❌ Erro ao salvar produto: " + msg);
       }
     } catch (e) {
-      console.error("Erro ao adicionar:", e);
-      alert("❌ Erro ao enviar produto ao servidor.");
+      console.error("Erro ao salvar:", e);
+      alert("❌ Erro de comunicação com o servidor.");
     }
   }
 
-  // ----------------------------------------------
-  // 🔹 Funções auxiliares
-  // ----------------------------------------------
   function limparCampos() {
     inputNome.value = "";
     inputPreco.value = "";
     inputQtd.value = "";
     selectCat.value = "FRUTA";
+    editandoId = null;
   }
 
-  function editar(id) {
-    alert("🛠️ Função de editar produto " + id + " ainda não implementada.");
+  function editar(produto) {
+    editandoId = produto.id;
+    inputNome.value = produto.nome;
+    inputPreco.value = (typeof produto.preco === "number" ? produto.preco : String(produto.preco)).toString().replace(".", ",");
+    inputQtd.value = produto.quantidade;
+
+    // tenta inverter para o select (se o back retornar FRUTAS/VERDURAS/LEGUMES)
+    const raw = String(produto.categoria || "").toUpperCase();
+    if (raw.startsWith("FRUT")) selectCat.value = "FRUTA";
+    else if (raw.startsWith("VERD")) selectCat.value = "VERDURA";
+    else if (raw.startsWith("LEG")) selectCat.value = "LEGUME";
+    else selectCat.value = "FRUTA";
+
+    btnAdd.textContent = "Salvar Alterações";
   }
 
   async function remover(id) {
     if (!confirm("Tem certeza que deseja remover o produto ID " + id + "?")) return;
-
     try {
-      const resp = await fetch(`${API}/produtos/${id}`, { method: "DELETE" });
-      if (resp.status === 204) {
-        await carregarProdutos();
-      } else {
-        alert("❌ Erro ao remover produto ID " + id);
+      let role = (document.body.dataset.role || "").toUpperCase();
+      if (!role && window.HS_getUsuarioAtivo) {
+        try { role = (window.HS_getUsuarioAtivo()?.role || "").toUpperCase(); } catch (_) {}
       }
+      const resp = await fetch(`${API}/produtos/${id}`, {
+        method: "DELETE",
+        headers: { "X-User-Role": role || "FUNCIONARIO" }
+      });
+      if (!resp.ok) throw new Error(`DELETE /produtos/${id} -> ${resp.status}`);
+      await carregarProdutos();
     } catch (e) {
-      console.error("Erro ao remover:", e);
-      alert("❌ Falha ao remover produto.");
+      console.error("❌ Erro ao remover:", e);
+      alert("❌ Erro de comunicação ao remover o produto.");
     }
   }
 
-  // ----------------------------------------------
-  // 🔹 Inicialização
-  // ----------------------------------------------
-  if (btnAdd) btnAdd.addEventListener("click", adicionar);
+  if (btnAdd) btnAdd.addEventListener("click", salvarProduto);
 
-  // Torna acessível globalmente para o main.js
+  // disponibiliza para o restante do app
   window.HS_loadProdutos = carregarProdutos;
+
+  // 🔔 quando login concluir, recarrega a tabela (garante botões ADMIN)
+  window.addEventListener("hs-login-concluido", () => {
+    setTimeout(() => carregarProdutos(), 300);
+  });
+
+  // 🚀 boot: se a página abrir com sessão já salva, renderiza tabela mesmo sem evento
+  setTimeout(() => {
+    try { carregarProdutos(); } catch (e) {}
+  }, 120);
 })();

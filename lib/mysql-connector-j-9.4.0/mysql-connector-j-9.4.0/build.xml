@@ -98,8 +98,8 @@ com.mysql.cj.testsuite.jvm=&lt;full_path_to_a_jdk_or_jre&gt;
 # - URL to the test database.
 # - Any of the current MySQL versions.
 # - Mandatory for 'test' target.
-com.mysql.cj.testsuite.url=jdbc:mysql://&lt;host&gt;:&lt;port&gt;/&lt;testDB&gt;?user=&lt;user&gt;&amp;password=&lt;pwd&gt;
-com.mysql.cj.testsuite.mysqlx.url=jdbc:mysql://&lt;user&gt;:&lt;pwd&gt;@&lt;host&gt;:&lt;port&gt;/&lt;testDB&gt;
+com.mysql.cj.testsuite.url=jdbc:postgresql://&lt;host&gt;:&lt;port&gt;/&lt;testDB&gt;?user=&lt;user&gt;&amp;password=&lt;pwd&gt;
+com.mysql.cj.testsuite.mysqlx.url=jdbc:postgresql://&lt;user&gt;:&lt;pwd&gt;@&lt;host&gt;:&lt;port&gt;/&lt;testDB&gt;
 
 # Cancels re-compiling between successive test executions.
 # - Comment variable if not needed.
@@ -798,7 +798,7 @@ See also com.mysql.cj.conf.PropertyDefinitions.SYSP_* variables for other test o
                      excludes="demo/**, documentation/**, instrumentation/**, testsuite/**" />
             <fileset dir="${com.mysql.cj.build.dir.driver}" includes="INFO_BIN, INFO_SRC, LICENSE, README" />
             <metainf dir="${com.mysql.cj.build.dir.driver}/META-INF" />
-            <service type="java.sql.Driver" provider="com.mysql.cj.jdbc.Driver" />
+            <service type="java.sql.Driver" provider="org.postgresql.Driver" />
         </jar>
     </target>
 

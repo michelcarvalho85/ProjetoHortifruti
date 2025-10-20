@@ -64,3 +64,18 @@
 2025-10-14T18:32:44.532647200 | Administrador | Realizou login via Web
 2025-10-14T18:32:46.319819700 | Administrador | Realizou login via Web
 2025-10-14T18:34:40.640789800 | Administrador | Realizou login via Web
+2025-10-14T18:38:31.704086600 | Sistema | Adicionou produto: LARANJA
+2025-10-14T18:47:30.083835300 | Sistema | Adicionou produto: TOMATE
+2025-10-14T18:54:43.218059300 | Administrador | Realizou login via Web
+2025-10-14T18:55:07.169688900 | Administrador | Realizou login via Web
+2025-10-14T18:59:23.261065800 | Administrador | Realizou login via Web
+2025-10-14T21:18:56.565104400 | Administrador | Realizou login via Web
+2025-10-14T21:19:16.869943300 | Sistema | Adicionou produto: lilia
+2025-10-14T23:15:09.597942 | Administrador | Realizou login via Web
+2025-10-14T23:20:11.215392100 | Funcionário | Realizou login via Web
+2025-10-14T23:20:24.162509300 | Administrador | Realizou login via Web
+2025-10-14T23:23:52.627941 | Funcionário | Realizou login via Web
+2025-10-14T23:24:02.416781 | Administrador | Realizou login via Web
+2025-10-14T23:37:09.141802400 | Administrador | Realizou login via Web
+2025-10-14T23:37:17.475414 | Sistema | Removeu produto ID 10
+2025-10-14T23:37:30.101821900 | Sistema | Atualizou produto ID 5

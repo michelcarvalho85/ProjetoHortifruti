@@ -78,10 +78,10 @@ import com.mysql.cj.util.Util;
 public abstract class BaseTestCase {
 
     /**
-     * JDBC URL, initialized from com.mysql.cj.testsuite.url system property, or defaults to jdbc:mysql:///test and its connection URL.
+     * JDBC URL, initialized from com.mysql.cj.testsuite.url system property, or defaults to jdbc:postgresql:///test and its connection URL.
      */
-    public static String dbUrl = "jdbc:mysql:///test";
-    public static String timeZoneFreeDbUrl = "jdbc:mysql:///test";
+    public static String dbUrl = "jdbc:postgresql:///test";
+    public static String timeZoneFreeDbUrl = "jdbc:postgresql:///test";
     protected static ConnectionUrl mainConnectionUrl = null;
     protected boolean isOpenSSL = false;
 
@@ -98,7 +98,7 @@ public abstract class BaseTestCase {
     private List<String[]> createdObjects;
 
     /** The driver to use */
-    protected String dbClass = "com.mysql.cj.jdbc.Driver";
+    protected String dbClass = "org.postgresql.Driver";
 
     /** My instance number */
     private int myInstanceNumber = 0;
@@ -500,7 +500,7 @@ public abstract class BaseTestCase {
         props.remove(PropertyKey.DBNAME.getKeyName());
         removeHostRelatedProps(props);
 
-        final StringBuilder urlBuilder = new StringBuilder("jdbc:mysql://").append(host).append(":").append(port).append("/?");
+        final StringBuilder urlBuilder = new StringBuilder("jdbc:postgresql://").append(host).append(":").append(port).append("/?");
 
         Enumeration<Object> keyEnum = props.keys();
         while (keyEnum.hasMoreElements()) {

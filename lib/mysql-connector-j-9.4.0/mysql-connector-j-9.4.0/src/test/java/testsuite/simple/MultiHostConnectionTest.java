@@ -132,7 +132,7 @@ public class MultiHostConnectionTest extends BaseTestCase {
         String hostPortPair = getEncodedHostPortPairFromTestsuiteUrl();
         String noHost = "testfoconn-nohost:12345";
 
-        StringBuilder testURL = new StringBuilder("jdbc:mysql://");
+        StringBuilder testURL = new StringBuilder("jdbc:postgresql://");
         testURL.append(noHost).append(",");
         testURL.append(noHost).append(",");
         testURL.append(noHost).append("/");
@@ -157,7 +157,7 @@ public class MultiHostConnectionTest extends BaseTestCase {
 
         // at least one host up
         for (int i = 1; i < 8; i++) {
-            testURL = new StringBuilder("jdbc:mysql://");
+            testURL = new StringBuilder("jdbc:postgresql://");
             testURL.append((i & 1) == 0 ? noHost : hostPortPair).append(",");
             testURL.append((i & 2) == 0 ? noHost : hostPortPair).append(",");
             testURL.append((i & 4) == 0 ? noHost : hostPortPair).append("/");
