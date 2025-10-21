@@ -1,0 +1,43 @@
+classDiagram
+    %% ========== CONTROLLER ==========
+    class ProdutoController {
+        +listar() : List
+        +buscarPorId(id:int) : Produto
+        +cadastrar(p:Produto) : Produto
+        +atualizar(p:Produto) : Produto
+        +deletar(id:int) : void
+    }
+
+    %% ========== SERVICE ==========
+    class ProdutoService {
+        +listarTodos() : List
+        +buscarPorId(id:int) : Produto
+        +salvar(p:Produto) : Produto
+        +atualizar(p:Produto) : Produto
+        +deletar(id:int) : void
+    }
+
+    %% ========== REPOSITORY ==========
+    class ProdutoRepository {
+        +salvar(p:Produto) : Produto
+        +buscarPorId(id:int) : Produto
+        +buscarPorNome(nome:String) : Produto
+        +listarTodos() : List
+        +deletarPorId(id:int) : void
+    }
+
+    %% ========== ENTITY ==========
+    class Produto {
+        -int id
+        -double valorUnitario
+        -String unidadeMedida
+        -String nome
+        -String categoria
+        +editarValor(novoValor:double) : String
+        +getInformacoes() : Map
+    }
+
+    %% RELAÇÕES
+    ProdutoController --> ProdutoService : depende
+    ProdutoService --> ProdutoRepository : depende
+    ProdutoRepository --> Produto : persiste/retorna

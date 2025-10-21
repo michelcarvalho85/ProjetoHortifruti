@@ -1,0 +1,10 @@
+---
+title: Ciclo de Vida SCRUM - HortiSystem
+---
+graph TD
+    A[🏁 Planejamento Inicial (Sprint 0)] --> B[🧩 Sprint 1 - Login e Autenticação]
+    B --> C[🥬 Sprint 2 - CRUD de Produtos]
+    C --> D[👤 Sprint 3 - CRUD de Usuários]
+    D --> E[🔗 Sprint 4 - Integração e Testes]
+    E --> F[📦 Sprint 5 - Entrega e Validação]
+    F --> G[♻️ Retrospectiva e Aprimoramento Contínuo]
