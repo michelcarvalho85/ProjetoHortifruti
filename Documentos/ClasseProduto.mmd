@@ -1,1 +1,15 @@
-classDiagram class Produto { - id: int - nome: string - quantidade: int - valor: decimal - unidadeMedida: string - categoria: string + Cadastrar(): void + ValidarDados(): bool + Editar(): void + Excluir(): void + Visualizar(): string }
+classDiagram
+    class Produto {
+        - int id
+        - string nome
+        - int quantidade
+        - decimal valor
+        - string unidadeMedida
+        - string categoria
+
+        + void Cadastrar()
+        + bool ValidarDados()
+        + void Editar()
+        + void Excluir()
+        + string Visualizar()
+    }
