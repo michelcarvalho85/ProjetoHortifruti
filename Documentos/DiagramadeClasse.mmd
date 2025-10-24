@@ -1,0 +1,92 @@
+classDiagram
+    class Usuario {
+        +Long id
+        +String username
+        +String email
+        +String password
+        +String role
+        +boolean ativo
+        +login() void
+        +desativar() void
+        +registrar() void
+    }
+
+    class Funcionario {
+        +Long id
+        +String nome
+        +String cpf
+        +String cargo
+        +String email
+        +String telefone
+        +admitir() void
+        +demitir() void
+    }
+
+    class Produto {
+        +Long id
+        +String nome
+        +String categoria
+        +int quantidade
+        +int unidadeMedida
+        +decimal valor
+        +baixarEstoque() void
+        +atualizarValor() void
+    }
+
+    class Venda {
+        +Long id
+        +String numeroNotaFiscal
+        +Date dataVenda
+        +String formaPagamento
+        +decimal valorTotal
+        +calcularTotal() decimal
+        +finalizar() void
+    }
+
+    class ItemVenda {
+        +Long id
+        +int quantidade
+        +decimal valorUnitario
+        +decimal subtotal
+        +calcularSubtotal() decimal
+    }
+
+    class LogEventos {
+        +Long id
+        +Long usuarioId
+        +String acao
+        +String recurso
+        +Timestamp dataHora
+        +registrar() void
+    }
+
+    class LogsLgpd {
+        +Long id
+        +String action
+        +Long userId
+        +String resource
+        +auditar() void
+    }
+
+    class ConsentimentoLog {
+        +Long id
+        +Long funcionarioId
+        +String tipo
+        +Date dataEvento
+        +registrar() void
+    }
+
+    class SistemaLog {
+        +Long id
+        +Long userId
+        +String action
+        +String resource
+        +registrar() void
+    }
+
+    Usuario "1" --> "0..*" LogEventos
+    Usuario "1" --> "0..*" LogsLgpd
+    Usuario "1" --> "0..*" SistemaLog
+    Funcionario "1" --> "0..*" ConsentimentoLog
+    Produto "1" --> "0..*" ItemVenda
+    Venda "1" --> "0..*" ItemVenda
